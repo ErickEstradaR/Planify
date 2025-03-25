@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Planify.Components;
 using Planify.Components.Account;
 using Planify.Data;
+using Planify.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,10 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<ArticulosService>();
+builder.Services.AddScoped<ClientesService>();
+builder.Services.AddScoped<EventosService>();
+builder.Services.AddScoped<PresupuestosService>();
 
 builder.Services.AddAuthentication(options =>
     {
