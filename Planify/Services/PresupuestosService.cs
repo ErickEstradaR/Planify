@@ -1,11 +1,11 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Planify.DAL;
+using Planify.Data;
 using Planify.Models;
 
 namespace Planify.Services;
 
-public class PresupuestosService (IDbContextFactory<Contexto> dbfactory)
+public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfactory)
 {
     /// <summary>
     /// Inserta o modifica un presupuesto en la base de datos dependiendo de si este existe o no.
