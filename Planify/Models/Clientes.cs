@@ -19,4 +19,5 @@ public class Clientes
     
     public DateTime FechaIngreso { get; set; }
     
+    public string UserId { get; set; }
 }
