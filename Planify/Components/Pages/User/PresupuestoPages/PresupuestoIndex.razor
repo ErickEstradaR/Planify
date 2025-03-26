@@ -1,0 +1,111 @@
+@page "/Presupuestos"
+@inject PresupuestosService presupuestoService
+@inject NavigationManager nav
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.IdentityModel.Tokens
+
+@attribute [Authorize]
+<AuthorizeView>
+    <Authorized>
+<PageTitle>Presupuestos</PageTitle>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card header">
+            </div>
+            <div class="card-body">
+                <h5 class="text-center">Mis Presupuestos</h5>
+                <div class="row">
+                    <div class="col-3">
+                        <InputSelect class="form-select" @bind-Value="@Filtro">
+                            <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        </InputSelect>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+                            </div>
+                            <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
+                            <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                            <a href="/Presupuesto/Create" class="btn btn-success">
+                                <span class="bi bi-plus-square"></span> Crear
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-hover">
+                    <thead class="table table-striped text-black">
+                    <tr>
+                        <th>EventoId</th>
+                        <th>Categor&iacute;a</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Direcci&oacute;n</th>
+                        <th>Fecha Evento</th>
+                        <th>Editar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @*Clientes*@
+                    @foreach (var presupuesto in ListaPresupuestos)
+                    {
+                        <tr>
+                            <td>@presupuesto.PresupuestoId</td>
+                            <td>@presupuesto.Evento.NombreEvento</td>
+                            <td>@presupuesto.Fecha.ToShortDateString()</td>
+                            <td class="text-center">
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Presupuesto/Edit/@presupuesto.PresupuestoId"></a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                @if (ListaPresupuestos.IsNullOrEmpty())
+                {
+                <td>Parece que no tienes presupuestos creados, que tal si hacemos uno?</td>
+                }
+            </div>
+        </div>
+    </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    public List<Presupuestos> ListaPresupuestos { get; set; } = new List<Presupuestos>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaPresupuestos = await presupuestoService.Listar(e => e.EventoId > 0);
+    }
+
+    @*Buscar técnicos según el filtro*@
+    private async Task Buscar()
+    {
+        if (Filtro == "ClienteId")
+        {
+            if (int.TryParse(ValorFiltro, out int clienteId))
+            {
+                ListaPresupuestos = await presupuestoService
+                    .Listar(c => c.EventoId >0 );
+            }
+
+
+        }
+    }
+
+    @*Metodo Restablecer para restablecer filtros y clientes*@
+    private async Task Restablecer()
+    {
+        ListaPresupuestos = await presupuestoService.Listar(c => c.EventoId > 0);
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+    }
+
+}
