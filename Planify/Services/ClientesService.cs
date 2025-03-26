@@ -1,11 +1,11 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Planify.DAL;
+using Planify.Data;
 using Planify.Models;
 
 namespace Planify.Services;
 
-public class ClientesService (IDbContextFactory<Contexto> dbfactory){
+public class ClientesService (IDbContextFactory<ApplicationDbContext> dbfactory){
 
     /// <summary>
     /// Este método inserta o modifica un cliente en la base de datos dependiendo de si este existe o no
@@ -93,5 +93,11 @@ public class ClientesService (IDbContextFactory<Contexto> dbfactory){
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
         return await contexto.Clientes.FirstOrDefaultAsync(c => c.ClienteId == ClienteId);
+    }
+    
+    public async Task<Clientes?> BuscarPorUserId(string userId)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        return await contexto.Clientes.FirstOrDefaultAsync(c => c.UserId == userId);
     }
 }
