@@ -8,6 +8,8 @@ public class Presupuestos
     [Key]
     public int PresupuestoId { get; set; }
     
+    public string UserId { get; set; }
+    
     public DateTime Fecha { get; set; }
     
     [ForeignKey("EventoId")]
