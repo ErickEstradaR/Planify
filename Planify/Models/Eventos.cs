@@ -9,6 +9,7 @@ public class Eventos
     [Key]
     public int EventoId { get; set; }
     
+    public string NombreEvento { get; set; }
     public string Categoria { get; set; }
     
     public string Descripcion { get; set; }
