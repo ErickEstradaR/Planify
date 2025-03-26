@@ -1,0 +1,135 @@
+@page "/Evento/Create"
+@inject EventosService eventosServices
+@inject ClientesService clienteServices
+@inject NavigationManager nav 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+<AuthorizeView>
+    <Authorized>
+    <EditForm Model="Evento" OnValidSubmit="Guardar" FormName="Evento">
+        <ChildContent Context="eventoContext">
+        <DataAnnotationsValidator/>
+
+            <PageTitle>Crea tu evento!</PageTitle>
+            <div class="container-fluid px-1 py-5 mx-auto">
+                <div class="row d-flex justify-content-center">
+                    <div class="card">
+                        <p class="blue-text">Cuentanos sobre tu Evento</p>
+                        <div class="card">
+                            <h5 class="text-center mb-4">Crea tu evento</h5>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Nombre de tu evento<span class="text-danger"> *</span></label>
+                                    <InputText id="nombre" class="form-control" @bind-Value="Evento.NombreEvento" />
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
+                                    <InputText id="numCedula" class="form-control" @bind-Value="Evento.Descripcion" />
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Donde será?<span class="text-danger"> *</span></label>
+                                    <InputText id="correo" class="form-control" @bind-Value="Evento.Direccion" />
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
+                                    <InputDate id="telefono" class="form-control" @bind-Value="Evento.FechaEvento" />
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
+                                <InputSelect id="categoria" class="form-control" @bind-Value="Evento.Categoria">
+                                    <option value="">Seleccione una categoría</option>
+                                    @foreach (var categoria in CategoriasEventos)
+                                    {
+                                    <option value="@categoria">@categoria</option>
+                                    }
+                                </InputSelect>
+                            </div>
+
+                        </div>
+
+                            
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-12 flex-column d-flex">
+                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
+                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion" />
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="form-group col-sm-6">
+                                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </ChildContent>
+    </EditForm>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    
+    private List<string> CategoriasEventos = new()
+    {
+        "Boda",
+        "Cumpleaños",
+        "Conferencia",
+        "Fiesta privada",
+        "Lanzamiento de producto",
+        "Reunión corporativa",
+        "Otro"
+    };
+    
+    public Eventos Evento { get; set; } = new Eventos();
+    public Clientes Cliente = new Clientes();
+
+    private async Task Guardar()
+    {
+        var userId = await ObtenerUserId();
+        if (!string.IsNullOrEmpty(userId))
+        { 
+            Cliente = await clienteServices.BuscarPorUserId(userId);
+        }
+
+        Evento.ClienteId = Cliente.ClienteId;
+        Evento.UserId = userId;
+        await eventosServices.Guardar(Evento);
+    }
+    
+    private async Task<string?> ObtenerUserId()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user is { Identity: { IsAuthenticated: true } })
+            {
+                return user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                       ?? user.FindFirst("sub")?.Value; // Busca el UserId en diferentes claims
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error obteniendo UserId: {ex.Message}");
+        }
+
+        return null; 
+    }
+
+}
+
+
+
+
