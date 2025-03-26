@@ -1,11 +1,11 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Planify.DAL;
+using Planify.Data;
 using Planify.Models;
 
 namespace Planify.Services;
 
-public class ArticulosService (IDbContextFactory<Contexto> dbfactory)
+public class ArticulosService (IDbContextFactory<ApplicationDbContext> dbfactory)
 {
     /// <summary>
     /// Este método inserta o modifica un articulo en la base de datos dependiendo de si este existe o no
