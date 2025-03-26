@@ -1,0 +1,136 @@
+@page "/Cliente"
+@inject ClientesService clienteServices
+@inject NavigationManager nav 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+<AuthorizeView>
+    <Authorized>
+    <EditForm Model="Cliente" OnValidSubmit="Guardar" FormName="Cliente">
+        <ChildContent Context="editContext">
+        <DataAnnotationsValidator/>
+
+            <PageTitle>Registro de clientes</PageTitle>
+            <div class="container-fluid px-1 py-5 mx-auto">
+                <div class="row d-flex justify-content-center">
+                    <div class="card">
+                        <h3>Empecemos</h3>
+                        <p class="blue-text">Solo responde algunas preguntas<br> 
+                            así te conoceremos un poco más </p>
+                        <div class="card">
+                            <h5 class="text-center mb-4">Cuéntanos sobre tí</h5>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Tu Nombre<span class="text-danger"> *</span></label>
+                                    <InputText id="nombre" class="form-control" @bind-Value="Cliente.Nombre" />
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
+                                    <InputText id="numCedula" class="form-control" @bind-Value="Cliente.NumCedula" />
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Correo Electrónico<span class="text-danger"> *</span></label>
+                                    <InputText id="correo" class="form-control" @bind-Value="Cliente.Correo" type="email" />
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
+                                    <InputText id="telefono" class="form-control" @bind-Value="Cliente.NumTelefono" type="tel" />
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Fecha de Ingreso<span class="text-danger"> *</span></label>
+                                    <InputDate id="fechaIngreso" class="form-control" @bind-Value="Cliente.FechaIngreso" />
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-12 flex-column d-flex">
+                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
+                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion" />
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="form-group col-sm-6">
+                                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ChildContent>
+    </EditForm>
+    </Authorized>
+</AuthorizeView>
+
+
+@code
+{
+    private Clientes Cliente { get; set; } = new Clientes();
+    public string MensajeError { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            
+            if (user.Identity is { IsAuthenticated: true })
+            {
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                             ?? user.FindFirst("sub")?.Value;
+
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    Cliente = await clienteServices.BuscarPorUserId(userId) ?? new Clientes { UserId = userId };
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MensajeError = "Ocurrió un error al cargar el cliente.";
+        }
+    }
+    
+    private async Task Guardar()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            
+            
+            
+            if (user is { Identity: { IsAuthenticated: true } })
+            {
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                             ?? user.FindFirst("sub")?.Value; // Busca el UserId en diferentes claims
+
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    Cliente.UserId = userId; 
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MensajeError = "Ocurrió un error al guardar el cliente.";
+        }
+        await clienteServices.Guardar(Cliente);
+        nav.NavigateTo("/");
+    }
+    
+}
+
+
