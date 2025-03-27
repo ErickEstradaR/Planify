@@ -16,4 +16,6 @@ public class PresupuestosDetalle
     public int ArticuloId { get; set; }
     [ForeignKey("ArticuloId")]
     public Articulos Articulo { get; set; }
+    
+    public int Cantidad { get; set; }
 }
