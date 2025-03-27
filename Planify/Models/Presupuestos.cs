@@ -10,12 +10,14 @@ public class Presupuestos
     
     public string UserId { get; set; }
     
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
     
     [ForeignKey("EventoId")]
     public Eventos Evento { get; set; }
     
     public int EventoId { get; set; }
+    
+    public float MontoTotal { get; set; }
     
     public List<PresupuestosDetalle> PresupuestosDetalles { get; set; } = new List<PresupuestosDetalle>();
 }
