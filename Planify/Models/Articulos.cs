@@ -15,5 +15,4 @@ public class Articulos
     
     public string Categoria { get; set; }
     
-    public string UserId { get; set; }
 }
