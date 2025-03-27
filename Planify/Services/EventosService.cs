@@ -14,7 +14,7 @@ public class EventosService (IDbContextFactory<ApplicationDbContext> dbfactory)
     /// <returns>retorna un bool si la operacion es exitosa y false si falla</returns>
     public async Task<bool> Guardar(Eventos evento)
     {
-        if (!await Existe(evento.ClienteId))
+        if (!await Existe(evento.EventoId))
         {
             return await Insertar(evento);
         }
@@ -45,9 +45,9 @@ public class EventosService (IDbContextFactory<ApplicationDbContext> dbfactory)
     }
 
     /// <summary>
-    /// Permite modificar un cliente en la base de datos
+    /// Permite modificar un evento en la base de datos
     /// </summary>
-    /// <param name="cliente"></param>
+    /// <param name="evento"></param>
     /// <returns>Verdadero si es modificado exitosamente y falso si no</returns>
     private async Task<bool> Modificar(Eventos evento)
     {
@@ -57,9 +57,9 @@ public class EventosService (IDbContextFactory<ApplicationDbContext> dbfactory)
     }
 
     /// <summary>
-    /// Permite eliminar un cliente en la base de datos, utilizando su Id lo busca y si es encontrado lo elimina
+    /// Permite eliminar un evento en la base de datos, utilizando su Id lo busca y si es encontrado lo elimina
     /// </summary>
-    /// <param name="ClienteId"></param>
+    /// <param name="EventoId"></param>
     /// <returns>Verdadero si fue eliminado y falso si no.</returns>
     public async Task<bool> Eliminar(int EventoId)
     {
