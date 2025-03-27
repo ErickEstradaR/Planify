@@ -1,6 +1,6 @@
 @page "/Presupuesto/Create"
 @inject EventosService eventosServices
-@inject ClientesService clienteServices
+@inject ArticulosService articulosService
 @inject PresupuestosService presupuestoService
 @inject NavigationManager nav 
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -12,61 +12,67 @@
 @attribute [Authorize]
 <AuthorizeView>
     <Authorized>
-    <EditForm Model="Evento" OnValidSubmit="Guardar" FormName="Evento">
+    <EditForm Model="Presupuesto" OnValidSubmit="Guardar" FormName="presupuesto">
         <ChildContent Context="presupuestoContext">
         <DataAnnotationsValidator/>
 
-            <PageTitle>Crea tu evento!</PageTitle>
+            <PageTitle>Qué necesitas para tu evento?</PageTitle>
             <div class="container-fluid px-1 py-5 mx-auto">
                 <div class="row d-flex justify-content-center">
                     <div class="card">
-                        <p class="blue-text">Cuentanos sobre tu Evento</p>
                         <div class="card">
-                            <h5 class="text-center mb-4">Crea tu evento</h5>
+                            <h5 class="text-center mb-4">Crea tu presupuesto</h5>
 
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Nombre de tu evento<span class="text-danger"> *</span></label>
-                                    <InputText id="nombre" class="form-control" @bind-Value="Evento.NombreEvento" />
+                                    <label class="form-control-label px-3">Evento<span class="text-danger"> *</span></label>
+                                    <InputSelect class="form-control" @bind-Value="Presupuesto.EventoId">
+                                        <option value="0" selected disabled> Seleccione un evento </option>
+                                        @foreach (var evento in ListaEventos)
+                                        {
+                                            <option value="@evento.EventoId"> @evento.NombreEvento
+                                            </option>
+                                        }
+                                    </InputSelect>
+                                    
                                 </div>
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
-                                    <InputText id="numCedula" class="form-control" @bind-Value="Evento.Descripcion" />
+                                    <label class="form-control-label px-3">Fecha<span class="text-danger"> *</span></label>
+                                    <InputDate class="form-control" @bind-Value="Presupuesto.Fecha" readonly />
                                 </div>
                             </div>
-
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Donde será?<span class="text-danger"> *</span></label>
-                                    <InputText id="correo" class="form-control" @bind-Value="Evento.Direccion" />
-                                </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
-                                    <InputDate id="telefono" class="form-control" @bind-Value="Evento.FechaEvento" />
-                                </div>
-                            </div>
-                            <div class="form-group col-sm-6 flex-column d-flex">
-                                <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
-                                <InputSelect id="categoria" class="form-control" @bind-Value="Evento.Categoria">
-                                    <option value="">Seleccione una categoría</option>
-                                    @foreach (var categoria in CategoriasEventos)
-                                    {
-                                    <option value="@categoria">@categoria</option>
-                                    }
-                                </InputSelect>
-                            </div>
-
                         </div>
-
-                            
-
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-12 flex-column d-flex">
-                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion" />
-                                </div>
-                            </div>
-                            <div class="row justify-content-end">
+                        <div class="border border-success p-3 mt-3">
+                            <ProductoPicker
+                                ArticulosList="ListaArticulos"
+                                ArticuloId="DetalleSeleccionado.ArticuloId"
+                                Cantidad="DetalleSeleccionado.Cantidad"
+                                ArticuloSeleccionado="HandleArticuloSeleccionado"
+                            />
+                            <table class="table table-light">
+                                <thead class="table table-striped">
+                                <tr class="text-center">
+                                    <th>Articulo</th>
+                                    <th>Cantidad</th>
+                                    <th>Remover</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                @foreach (var detalle in Presupuesto.PresupuestosDetalles)
+                                {
+                                <tr class="text-center">
+                                    <td>@detalle.Articulo.Nombre</td>
+                                    <td>@detalle.Cantidad</td>
+                                    <td>
+                                        <button type="button" @onclick="() => EliminarDetalle(detalle)" class="btn btn-outline-danger bi bi-trash mt-2"> Remover</button>
+                                    </td>
+                                </tr>
+                                }
+                                </tbody>
+                            </table>
+                            <hr />
+                        </div>
+                        <div class="row justify-content-end">
                                 <div class="form-group col-sm-6">
                                     <button type="submit" class="btn btn-primary btn-block">Guardar</button>
                                 </div>
@@ -81,31 +87,23 @@
 
 @code {
     
-    private List<string> CategoriasEventos = new()
-    {
-        "Boda",
-        "Cumpleaños",
-        "Conferencia",
-        "Fiesta privada",
-        "Lanzamiento de producto",
-        "Reunión corporativa",
-        "Otro"
-    };
-    
-    public Eventos Evento { get; set; } = new Eventos();
+    public Presupuestos Presupuesto { get; set; } = new Presupuestos();
     public Clientes Cliente = new Clientes();
-
+    public List<Eventos> ListaEventos = new List<Eventos>();
+    public PresupuestosDetalle DetalleSeleccionado { get; set; } = new();
+    public List<Articulos> ListaArticulos = new List<Articulos>();
     private async Task Guardar()
     {
+        var userid = await ObtenerUserId();
+        Presupuesto.UserId = userid;
+        await presupuestoService.Guardar(Presupuesto);
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
         var userId = await ObtenerUserId();
-        if (!string.IsNullOrEmpty(userId))
-        { 
-            Cliente = await clienteServices.BuscarPorUserId(userId);
-        }
-
-        Evento.ClienteId = Cliente.ClienteId;
-        Evento.UserId = userId;
-        await eventosServices.Guardar(Evento);
+        ListaEventos = await eventosServices.Listar(e=>e.UserId == userId);
+        ListaArticulos = await articulosService.Listar(a => a.ArticuloId > 0);
     }
     
     private async Task<string?> ObtenerUserId()
@@ -118,17 +116,38 @@
             if (user is { Identity: { IsAuthenticated: true } })
             {
                 return user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                       ?? user.FindFirst("sub")?.Value; // Busca el UserId en diferentes claims
+                       ?? user.FindFirst("sub")?.Value; 
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error obteniendo UserId: {ex.Message}");
         }
-
         return null; 
     }
 
+    private void HandleArticuloSeleccionado((Articulos articulo, int cantidad) selection)
+    {
+        if (selection.articulo != null && selection.cantidad > 0)
+        {
+            var articuloSeleccionado = ListaArticulos.FirstOrDefault(a => a.ArticuloId == selection.articulo.ArticuloId);
+
+            var nuevoDetalle = new PresupuestosDetalle()
+            {
+                ArticuloId = selection.articulo.ArticuloId,
+                Cantidad = selection.cantidad,
+                Articulo = articuloSeleccionado 
+            };
+            Presupuesto.PresupuestosDetalles.Add(nuevoDetalle);
+            DetalleSeleccionado = new PresupuestosDetalle();
+        }
+    }
+    
+    private void EliminarDetalle(PresupuestosDetalle detalle)
+    {
+        Presupuesto.PresupuestosDetalles.Remove(detalle);
+    }
+    
 }
 
 
