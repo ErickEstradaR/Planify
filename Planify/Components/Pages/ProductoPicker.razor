@@ -28,7 +28,7 @@
     [Parameter]
     public List<Articulos> ArticulosList { get; set; } = [];
     [Parameter]
-    public EventCallback<(Articulos , int )> ArticuloSeleccionado { get; set; }
+    public EventCallback<(Articulos articulos , int cantidad)> ArticuloSeleccionado { get; set; }
     [Parameter]
     public int ArticuloId { get; set; }
     [Parameter]
@@ -40,14 +40,25 @@
     {
         MensajeError = string.Empty;
     
-        if (ArticuloId > 0)
+        if (ArticuloId > 0 && Cantidad > 0)
         {
-            var articuloSeleccionado = ArticulosList.Single(a => a.ArticuloId == ArticuloId);
-            await ArticuloSeleccionado.InvokeAsync((articuloSeleccionado, Cantidad));
+            var articuloSeleccionado = ArticulosList.FirstOrDefault(a => a.ArticuloId == ArticuloId);
+            
+            if (articuloSeleccionado != null)
+            {
+                await ArticuloSeleccionado.InvokeAsync((articuloSeleccionado, Cantidad));
+                // Reset values after successful selection
+                ArticuloId = 0;
+                Cantidad = 0;
+            }
+            else
+            {
+                MensajeError = "No se encontró el artículo seleccionado.";
+            }
         }
         else
         {
-            MensajeError = "Debe seleccionar un articulo.";
+            MensajeError = "Debe seleccionar un artículo y especificar una cantidad.";
         }
     }
 }
