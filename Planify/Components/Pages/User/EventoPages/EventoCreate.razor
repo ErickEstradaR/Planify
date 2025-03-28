@@ -13,7 +13,8 @@
     <Authorized>
     <EditForm Model="Evento" OnValidSubmit="Guardar" FormName="Evento">
         <ChildContent Context="eventoContext">
-        <DataAnnotationsValidator/>
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
 
             <PageTitle>Crea tu evento!</PageTitle>
             <div class="container-fluid px-1 py-5 mx-auto">
@@ -59,7 +60,7 @@
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-12 flex-column d-flex">
                                     <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion" />
+                                    <InputText id="direccion" class="form-control" @bind-Value="Evento.Direccion" />
                                 </div>
                             </div>
                             <div class="row justify-content-end">
@@ -102,6 +103,7 @@
         Evento.ClienteId = Cliente.ClienteId;
         Evento.UserId = userId;
         await eventosServices.Guardar(Evento);
+        nav.NavigateTo("/Eventos");
     }
     
     private async Task<string?> ObtenerUserId()

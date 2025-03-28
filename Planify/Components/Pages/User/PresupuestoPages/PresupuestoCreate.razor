@@ -14,7 +14,8 @@
     <Authorized>
     <EditForm Model="Presupuesto" OnValidSubmit="Guardar" FormName="presupuesto">
         <ChildContent Context="presupuestoContext">
-        <DataAnnotationsValidator/>
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
 
             <PageTitle>Qué necesitas para tu evento?</PageTitle>
             <div class="container-fluid px-1 py-5 mx-auto">
@@ -25,6 +26,12 @@
 
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
+
+                                    <div class="form-group col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">PresupuestoId<span class="text-danger"> *</span></label>
+                                        <InputNumber class="form-control" @bind-Value="Presupuesto.PresupuestoId" readonly />
+                                    </div>
+                                    
                                     <label class="form-control-label px-3">Evento<span class="text-danger"> *</span></label>
                                     <InputSelect class="form-control" @bind-Value="Presupuesto.EventoId">
                                         <option value="0" selected disabled> Seleccione un evento </option>
@@ -34,12 +41,13 @@
                                             </option>
                                         }
                                     </InputSelect>
-                                    
+
                                 </div>
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Fecha<span class="text-danger"> *</span></label>
                                     <InputDate class="form-control" @bind-Value="Presupuesto.Fecha" readonly />
                                 </div>
+                                
                             </div>
                         </div>
                         <div class="border border-success p-3 mt-3">
@@ -88,10 +96,10 @@
 @code {
     
     public Presupuestos Presupuesto { get; set; } = new Presupuestos();
-    public Clientes Cliente = new Clientes();
     public List<Eventos> ListaEventos = new List<Eventos>();
     public PresupuestosDetalle DetalleSeleccionado { get; set; } = new();
     public List<Articulos> ListaArticulos = new List<Articulos>();
+    
     private async Task Guardar()
     {
         var userid = await ObtenerUserId();
@@ -103,7 +111,8 @@
     {
         var userId = await ObtenerUserId();
         ListaEventos = await eventosServices.Listar(e=>e.UserId == userId);
-        ListaArticulos = await articulosService.Listar(a => a.ArticuloId > 0);
+        ListaArticulos = await articulosService.Listar(a => a.ArticuloId > -4);
+        Presupuesto.Fecha = DateTime.Now;
     }
     
     private async Task<string?> ObtenerUserId()
@@ -128,15 +137,14 @@
 
     private void HandleArticuloSeleccionado((Articulos articulo, int cantidad) selection)
     {
-        if (selection.articulo != null && selection.cantidad > 0)
+        if (selection.articulo != null)
         {
-            var articuloSeleccionado = ListaArticulos.FirstOrDefault(a => a.ArticuloId == selection.articulo.ArticuloId);
-
-            var nuevoDetalle = new PresupuestosDetalle()
+            var nuevoDetalle = new PresupuestosDetalle
             {
+                PresupuestoId = Presupuesto.PresupuestoId,
                 ArticuloId = selection.articulo.ArticuloId,
                 Cantidad = selection.cantidad,
-                Articulo = articuloSeleccionado 
+                Articulo = selection.articulo
             };
             Presupuesto.PresupuestosDetalles.Add(nuevoDetalle);
             DetalleSeleccionado = new PresupuestosDetalle();
