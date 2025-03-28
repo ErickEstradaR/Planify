@@ -1,5 +1,6 @@
 @page "/Presupuestos"
 @inject PresupuestosService presupuestoService
+@inject EventosService eventosService
 @inject NavigationManager nav
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
@@ -41,21 +42,20 @@
                 <table class="table table-hover">
                     <thead class="table table-striped text-black">
                     <tr>
-                        <th>EventoId</th>
-                        <th>Categor&iacute;a</th>
+                        <th>PresupuestoId</th>
+                        <th>Nombre de Evento</th>
                         <th>Descripci&oacute;n</th>
                         <th>Direcci&oacute;n</th>
-                        <th>Fecha Evento</th>
+                        <th>Fecha Presupuesto</th>
                         <th>Editar</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @*Clientes*@
                     @foreach (var presupuesto in ListaPresupuestos)
                     {
                         <tr>
                             <td>@presupuesto.PresupuestoId</td>
-                            <td>@presupuesto.Evento.NombreEvento</td>
+                            <td>@presupuesto.Evento?.NombreEvento</td>
                             <td>@presupuesto.Fecha.ToShortDateString()</td>
                             <td class="text-center">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Presupuesto/Edit/@presupuesto.PresupuestoId"></a>
@@ -66,7 +66,7 @@
                 </table>
                 @if (ListaPresupuestos.IsNullOrEmpty())
                 {
-                <td>Parece que no tienes presupuestos creados, que tal si hacemos uno?</td>
+                <h6>Parece que no tienes presupuestos creados, que tal si hacemos uno?</h6>
                 }
             </div>
         </div>
@@ -77,12 +77,15 @@
 @code
 {
     public List<Presupuestos> ListaPresupuestos { get; set; } = new List<Presupuestos>();
+    public List<Eventos> EventosList { get; set; } = new List<Eventos>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        ListaPresupuestos = await presupuestoService.Listar(e => e.EventoId > 0);
+        var userId = await ObtenerUserId();
+        EventosList = await eventosService.Listar(e => e.EventoId > 0);
+        ListaPresupuestos = await presupuestoService.Listar(p => p.UserId == userId);
     }
 
     @*Buscar técnicos según el filtro*@
@@ -106,6 +109,26 @@
         ListaPresupuestos = await presupuestoService.Listar(c => c.EventoId > 0);
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
+    }
+    
+    private async Task<string?> ObtenerUserId()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user is { Identity: { IsAuthenticated: true } })
+            {
+                return user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                       ?? user.FindFirst("sub")?.Value; // Busca el UserId en diferentes claims
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error obteniendo UserId: {ex.Message}");
+        }
+        return null; 
     }
 
 }
