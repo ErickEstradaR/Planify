@@ -7,58 +7,92 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 
+
 @attribute [Authorize]
 <AuthorizeView>
     <Authorized>
     <EditForm Model="Cliente" OnValidSubmit="Guardar" FormName="Cliente">
-        <ChildContent Context="editContext">
-        <DataAnnotationsValidator/>
+        <ChildContent Context="editcliente">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
 
             <PageTitle>Registro de clientes</PageTitle>
             <div class="container-fluid px-1 py-5 mx-auto">
                 <div class="row d-flex justify-content-center">
                     <div class="card">
-                        <h3>Empecemos</h3>
-                        <p class="blue-text">Solo responde algunas preguntas<br> 
-                            así te conoceremos un poco más </p>
+                        
+                        @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
+                        @if (Cliente == null)
+                        {
+                            <h3>Empecemos</h3>
+                            <p class="blue-text">Solo responde algunas preguntas<br>
+                                así te conoceremos un poco más </p>
+                        }
+                        @if (Cliente != null)
+                        {
+                            <h3 class="text-center">Bienvenido! @Cliente.Nombre</h3>
+                            <p class="blue-text">Aquí Puedes modificar tu información<br>
+                                Te equivocaste en algo?</p>
+                        }
+                        
                         <div class="card">
-                            <h5 class="text-center mb-4">Cuéntanos sobre tí</h5>
+                            
+                            @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
+                            @if (Cliente == null)
+                            {
+                                <h5 class="text-center mb-4">Cuéntanos sobre tí</h5>
+                            }
+                            @if (Cliente != null)
+                            {
+                                <h5 class="text-center mb-4">Modifica tu información</h5>
+                            }
+                            @*----------------------*@
 
+                            @*Nombre del Cliente*@
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Tu Nombre<span class="text-danger"> *</span></label>
-                                    <InputText id="nombre" class="form-control" @bind-Value="Cliente.Nombre" />
+                                    <InputText id="nombre" class="form-control" @bind-Value="Cliente.Nombre"/>
                                 </div>
+                                
+                                @*Número de cedula del cliente*@
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
-                                    <InputText id="numCedula" class="form-control" @bind-Value="Cliente.NumCedula" />
+                                    <InputText id="numCedula" class="form-control" @bind-Value="Cliente.NumCedula"/>
                                 </div>
                             </div>
 
+                            @*Correo Electrónico del cliente*@
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Correo Electrónico<span class="text-danger"> *</span></label>
-                                    <InputText id="correo" class="form-control" @bind-Value="Cliente.Correo" type="email" />
+                                    <InputText id="correo" class="form-control" @bind-Value="Cliente.Correo" type="email"/>
                                 </div>
+                                
+                                @*Número de telefono del cliente*@
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
-                                    <InputText id="telefono" class="form-control" @bind-Value="Cliente.NumTelefono" type="tel" />
+                                    <InputText id="telefono" class="form-control" @bind-Value="Cliente.NumTelefono" type="tel"/>
                                 </div>
                             </div>
 
+                            @*Fecha de ingreso, se mantiene readonly ya que se asigna automático*@
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Fecha de Ingreso<span class="text-danger"> *</span></label>
-                                    <InputDate id="fechaIngreso" class="form-control" @bind-Value="Cliente.FechaIngreso" />
+                                    <InputDate id="fechaIngreso" class="form-control" @bind-Value="Cliente.FechaIngreso"/>
                                 </div>
                             </div>
 
+                            @*Dirección del Cliente*@
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-12 flex-column d-flex">
                                     <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion" />
+                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion"/>
                                 </div>
                             </div>
+                            
+                            @*Botón Guardar*@
                             <div class="row justify-content-end">
                                 <div class="form-group col-sm-6">
                                     <button type="submit" class="btn btn-primary btn-block">Guardar</button>
@@ -76,6 +110,7 @@
 
 @code
 {
+    
     private Clientes Cliente { get; set; } = new Clientes();
     public string MensajeError { get; set; }
     
@@ -107,11 +142,9 @@
     {
         try
         {
+            @*Asigna id del usuario actual a la info. de cliente*@
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-            
-            
-            
             if (user is { Identity: { IsAuthenticated: true } })
             {
                 var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
@@ -121,6 +154,12 @@
                 {
                     Cliente.UserId = userId; 
                 }
+
+                @*Si es la primera vez que el cliente registra su información, se asignara la fecha correspondiente*@
+                if (Cliente == null)
+                {
+                    Cliente.FechaIngreso = DateTime.Now;
+                }
             }
         }
         catch (Exception ex)
@@ -129,8 +168,8 @@
         }
         await clienteServices.Guardar(Cliente);
         nav.NavigateTo("/");
+        
     }
-    
 }
 
 
