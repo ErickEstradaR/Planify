@@ -43,11 +43,10 @@
                     <thead class="table table-striped text-black">
                     <tr>
                         <th>PresupuestoId</th>
-                        <th>Nombre de Evento</th>
-                        <th>Descripci&oacute;n</th>
-                        <th>Direcci&oacute;n</th>
-                        <th>Fecha Presupuesto</th>
-                        <th>Editar</th>
+                        <th>Evento</th>
+                        <th>Fecha</th>
+                        <th>Monto Total</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,9 +56,11 @@
                             <td>@presupuesto.PresupuestoId</td>
                             <td>@presupuesto.Evento?.NombreEvento</td>
                             <td>@presupuesto.Fecha.ToShortDateString()</td>
+                            <td>@presupuesto.MontoTotal</td>
                             <td class="text-center">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Presupuesto/Edit/@presupuesto.PresupuestoId"></a>
-                            </td>
+                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(presupuesto.PresupuestoId)"></button>
+                                </td>
                         </tr>
                     }
                     </tbody>
@@ -106,6 +107,7 @@
     @*Metodo Restablecer para restablecer filtros y clientes*@
     private async Task Restablecer()
     {
+        
         ListaPresupuestos = await presupuestoService.Listar(c => c.EventoId > 0);
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
@@ -131,4 +133,9 @@
         return null; 
     }
 
+    private async Task Eliminar(int id)
+    {
+        await presupuestoService.Eliminar(id);
+        ListaPresupuestos = await presupuestoService.Listar(p => true);
+    }
 }
