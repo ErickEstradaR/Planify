@@ -1,11 +1,9 @@
 @page "/Cliente"
 @inject ClientesService clienteServices
 @inject NavigationManager nav 
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@rendermode InteractiveServer
-
-@using System.Security.Claims
+@inject UserService user
 @using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
 
 
 @attribute [Authorize]
@@ -31,7 +29,7 @@
                         @if (Cliente != null)
                         {
                             <h3 class="text-center">Bienvenido! @Cliente.Nombre</h3>
-                            <p class="blue-text">Aquí Puedes modificar tu información<br>
+                            <p class="blue-text">Aquí puedes modificar tu información<br>
                                 Te equivocaste en algo?</p>
                         }
                         
@@ -110,66 +108,39 @@
 
 @code
 {
-    
     private Clientes Cliente { get; set; } = new Clientes();
     public string MensajeError { get; set; }
+    public string? userId;
     
     protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            
-            if (user.Identity is { IsAuthenticated: true })
-            {
-                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                             ?? user.FindFirst("sub")?.Value;
-
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    Cliente = await clienteServices.BuscarPorUserId(userId) ?? new Clientes { UserId = userId };
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            MensajeError = "Ocurrió un error al cargar el cliente.";
-        }
+    { 
+        userId =await user.ObtenerUserId();
+        
+        if (!string.IsNullOrEmpty(userId))
+       {
+           Cliente = await clienteServices.BuscarPorUserId(userId) ?? new Clientes { UserId = userId };
+       }
     }
     
     private async Task Guardar()
     {
-        try
-        {
-            @*Asigna id del usuario actual a la info. de cliente*@
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            if (user is { Identity: { IsAuthenticated: true } })
-            {
-                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                             ?? user.FindFirst("sub")?.Value; // Busca el UserId en diferentes claims
-
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    Cliente.UserId = userId; 
-                }
-
-                @*Si es la primera vez que el cliente registra su información, se asignara la fecha correspondiente*@
-                if (Cliente == null)
-                {
-                    Cliente.FechaIngreso = DateTime.Now;
-                }
-            }
+        if (!string.IsNullOrEmpty(userId))
+        { 
+            Cliente.UserId = userId; 
         }
-        catch (Exception ex)
+
+        @*Si es la primera vez que el cliente registra su información, se asignara la fecha correspondiente*@
+        if (Cliente == null)
         {
-            MensajeError = "Ocurrió un error al guardar el cliente.";
+            Cliente.FechaIngreso = DateTime.Now;
         }
+        
         await clienteServices.Guardar(Cliente);
         nav.NavigateTo("/");
-        
     }
+    
 }
+
+
 
 
