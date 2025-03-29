@@ -40,6 +40,12 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
     private async Task<bool> Insertar(Presupuestos presupuesto)
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
+        foreach (var detalle in presupuesto.PresupuestosDetalles)
+        {
+            detalle.Articulo = null;
+        }
+
+        await AfectarDetalle(presupuesto.PresupuestosDetalles);
         contexto.Presupuestos.Add(presupuesto);
         return await contexto.SaveChangesAsync() > 0;
     }
@@ -79,7 +85,7 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
         return await contexto.Presupuestos
-            .AsNoTracking()
+            .AsNoTracking().Include(p=>p.Evento)
             .Where(criterio)
             .ToListAsync();
     }
@@ -93,5 +99,19 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
         return await contexto.Presupuestos.FirstOrDefaultAsync(p => p.PresupuestoId == presupuestoId);
+    }
+    
+    private async Task AfectarDetalle(IEnumerable<PresupuestosDetalle> detalles)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        foreach (var detalle in detalles)
+        {
+            var articulo = await contexto.Articulos.FindAsync(detalle.ArticuloId);
+            if (articulo != null)
+            {
+                Console.WriteLine("prueba");
+            }
+        }
+        await contexto.SaveChangesAsync();
     }
 }
