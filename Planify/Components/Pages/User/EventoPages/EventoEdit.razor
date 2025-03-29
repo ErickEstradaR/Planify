@@ -19,7 +19,7 @@
             <div class="container-fluid px-1 py-5 mx-auto">
                 <div class="row d-flex justify-content-center">
                     <div class="card">
-                        <p class="blue-text">Tu evento</p>
+                        <p class="blue-text">@Evento.NombreEvento</p>
                         <div class="card">
                             <h5 class="text-center mb-4">Modificar evento</h5>
 
@@ -60,15 +60,13 @@
                             </div>
 
                         </div>
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-12 flex-column d-flex">
-                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                                    <InputText id="direccion" class="form-control" @bind-Value="Cliente.Direccion" />
-                                </div>
-                            </div>
                             <div class="row justify-content-end">
-                                <div class="form-group col-sm-6">
+                                <div class="text-center">
+                                    <a href="/Eventos" class="btn btn-secondary">
+                                        <span class="bi bi-arrow-left" ></span> Volver
+                                    </a>
                                     <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -135,6 +133,12 @@
     protected override async Task OnInitializedAsync()
     {
         Evento = await eventosServices.Buscar(id);
+    }
+
+    public async Task Eliminar()
+    {
+        await eventosServices.Eliminar(id);
+        nav.NavigateTo("/Eventos");
     }
 
 }

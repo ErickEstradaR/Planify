@@ -57,15 +57,10 @@
                             </div>
 
                         </div>
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-12 flex-column d-flex">
-                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                                    <InputText id="direccion" class="form-control" @bind-Value="Evento.Direccion" />
-                                </div>
-                            </div>
                             <div class="row justify-content-end">
-                                <div class="form-group col-sm-6">
-                                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                                <div class="text-center">
+                                    <a href="/Eventos" class="btn btn-secondary">Volver</a>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
                                 </div>
                             </div>
                         </div>
@@ -98,10 +93,10 @@
         if (!string.IsNullOrEmpty(userId))
         { 
             Cliente = await clienteServices.BuscarPorUserId(userId);
+            Evento.UserId = userId;
         }
 
         Evento.ClienteId = Cliente.ClienteId;
-        Evento.UserId = userId;
         await eventosServices.Guardar(Evento);
         nav.NavigateTo("/Eventos");
     }
