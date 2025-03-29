@@ -102,9 +102,19 @@
     
     private async Task Guardar()
     {
-        var userid = await ObtenerUserId();
-        Presupuesto.UserId = userid;
-        await presupuestoService.Guardar(Presupuesto);
+        try
+        {
+            var userid = await ObtenerUserId();
+            Presupuesto.UserId = userid;
+            await presupuestoService.Guardar(Presupuesto);
+            nav.NavigateTo("/Presupuestos");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
     
     protected override async Task OnInitializedAsync()
@@ -137,17 +147,21 @@
 
     private void HandleArticuloSeleccionado((Articulos articulo, int cantidad) selection)
     {
+        var articuloseleccionado = ListaArticulos.FirstOrDefault(a => a.ArticuloId == selection.articulo.ArticuloId);
+
         if (selection.articulo != null)
         {
             var nuevoDetalle = new PresupuestosDetalle
             {
-                PresupuestoId = Presupuesto.PresupuestoId,
+                
                 ArticuloId = selection.articulo.ArticuloId,
                 Cantidad = selection.cantidad,
-                Articulo = selection.articulo
+                Articulo = articuloseleccionado
             };
             Presupuesto.PresupuestosDetalles.Add(nuevoDetalle);
+            Presupuesto.MontoTotal = (float)selection.articulo.Precio;
             DetalleSeleccionado = new PresupuestosDetalle();
+            
         }
     }
     
