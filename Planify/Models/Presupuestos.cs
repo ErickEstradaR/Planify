@@ -18,7 +18,7 @@ public class Presupuestos
     
     [Required]
     [Range(1, int.MaxValue)]
-    public float MontoTotal { get; set; }
+    public double MontoTotal { get; set; }
     
     public List<PresupuestosDetalle> PresupuestosDetalles { get; set; } = new List<PresupuestosDetalle>();
 }
