@@ -1,7 +1,7 @@
 @page "/Eventos"
 @inject EventosService eventoService
 @inject NavigationManager nav
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserService user
 @rendermode InteractiveServer
 
 @using System.Security.Claims
@@ -19,10 +19,13 @@
                 <h5 class="text-center">Mis Eventos</h5>
                 <div class="row">
                     <div class="col-3">
+                        @*Filtro de búsqueda*@
                         <InputSelect class="form-select" @bind-Value="@Filtro">
                             <option value="" selected disabled>Elija una opci&oacute;n</option>
                         </InputSelect>
                     </div>
+                    
+                    @*Botones*@
                     <div class="col-4">
                         <div class="input-group">
                             <div class="col-auto">
@@ -36,7 +39,8 @@
                         </div>
                     </div>
                 </div>
-
+                
+                @*Tabla de Eventos*@
                 <table class="table table-hover">
                     <thead class="table table-striped text-black">
                     <tr>
@@ -49,7 +53,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @*Clientes*@
+                    @*Eventos*@
                     @foreach (var evento in ListaEventos)
                     {
                         <tr>
@@ -76,10 +80,12 @@
     public List<Eventos> ListaEventos { get; set; } = new List<Eventos>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
+    public string? userId;
 
     protected override async Task OnInitializedAsync()
     {
-        ListaEventos = await eventoService.Listar(e => e.EventoId > 0);
+        userId = await user.ObtenerUserId();
+        ListaEventos = await eventoService.Listar(e=>e.UserId == userId);
     }
 
     @*Buscar técnicos según el filtro*@
@@ -100,9 +106,8 @@
     @*Metodo Restablecer para restablecer filtros y clientes*@
     private async Task Restablecer()
     {
-        ListaEventos = await eventoService.Listar(c => c.ClienteId > 0);
+        ListaEventos = await eventoService.Listar(e=>e.UserId == userId);
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
     }
-
 }
