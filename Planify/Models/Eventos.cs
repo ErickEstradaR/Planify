@@ -23,8 +23,7 @@ public class Eventos
 
     [Required(ErrorMessage = "La fecha del evento es obligatoria.")]
     public DateTime FechaEvento { get; set; }
-
-    [Required(ErrorMessage = "El UserId es obligatorio.")]
+    
     public string UserId { get; set; }
     
     public int ClienteId { get; set; }
