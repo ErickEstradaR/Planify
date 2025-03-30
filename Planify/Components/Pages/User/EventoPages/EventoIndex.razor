@@ -22,6 +22,9 @@
                         @*Filtro de búsqueda*@
                         <InputSelect class="form-select" @bind-Value="@Filtro">
                             <option value="" selected disabled>Elija una opci&oacute;n</option>
+                            <option value="EventoId">Id de Evento</option>
+                            <option value="NombreEvento">Nombre de tu Evento</option>
+                            <option value="Categoria">Categor&iacute;a</option>
                         </InputSelect>
                     </div>
                     
@@ -38,6 +41,17 @@
                             </a>
                         </div>
                     </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Desde</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaDesde" />
+                        </div>
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Hasta</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaHasta" />
+                        </div>
+                    </div>
                 </div>
                 
                 @*Tabla de Eventos*@
@@ -46,8 +60,8 @@
                     <tr>
                         <th>EventoId</th>
                         <th>Nombre</th>
-                        <th>Categor&iacute;a</th>
                         <th>Direcci&oacute;n</th>
+                        <th>Categor&iacute;a</th>
                         <th>Fecha del Evento</th>
                         <th>Acciones</th>
                     </tr>
@@ -64,6 +78,7 @@
                             <td>@evento.FechaEvento.ToShortDateString()</td>
                             <td class="text-center">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@evento.EventoId"></a>
+                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(evento.EventoId)"></button>
                             </td>
                         </tr>
                     }
@@ -81,8 +96,62 @@
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
     public string? userId;
+    public DateTime? FechaDesde { get; set; } = DateTime.Now;
+    public DateTime? FechaHasta { get; set; } = DateTime.Now.AddDays(7);
 
     protected override async Task OnInitializedAsync()
+    {
+        await CargarEventosPorRol();
+    }
+    
+    @*Buscar según el filtro*@
+    private async Task Buscar()
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            userId = await user.ObtenerUserId(); 
+        }
+        var usuarioActual = await user.EncontrarUsuario(userId);
+        var roles = await user.ObtenerRol(usuarioActual);
+        bool esAdmin = roles.Contains("Admin");
+        
+        if (Filtro == "EventoId")
+        {
+            if (int.TryParse(ValorFiltro, out int EventoId))
+            {
+                ListaEventos = await eventoService.Listar(e =>
+                    e.EventoId == EventoId &&
+                    (esAdmin || e.UserId == userId)); 
+            }
+        }
+        else if (Filtro == "NombreEvento")
+        {
+            ListaEventos = await eventoService.Listar(e =>
+                e.NombreEvento.ToLower().Contains(ValorFiltro.ToLower()) &&
+                e.FechaEvento >= FechaDesde &&
+                e.FechaEvento <= FechaHasta &&
+                (esAdmin || e.UserId == userId)); 
+        }
+        else if (Filtro == "Categoria")
+        {
+            ListaEventos = await eventoService.Listar(e =>
+                e.Categoria.ToLower().Contains(ValorFiltro.ToLower()) &&
+                e.FechaEvento >= FechaDesde &&
+                e.FechaEvento <= FechaHasta &&
+                (esAdmin || e.UserId == userId)); 
+        }
+    }
+
+    @*Metodo Restablecer para restablecer filtros*@
+    private async Task Restablecer()
+    {
+        CargarEventosPorRol();
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+    }
+    
+    @*Metodo para cargar eventos segun rol del usuario*@
+    private async Task CargarEventosPorRol()
     {
         userId = await user.ObtenerUserId();
         var currentUser = await user.EncontrarUsuario(userId);
@@ -90,7 +159,6 @@
         {
             var roles = await user.ObtenerRol(currentUser); 
             bool isAdmin = roles.Contains("Admin");
-            
             if (isAdmin)
             {
                 ListaEventos = await eventoService.Listar(e => true);
@@ -106,26 +174,11 @@
         }
     }
 
-
-
-    @*Buscar técnicos según el filtro*@
-    private async Task Buscar()
+    @*Metodo Eliminar*@
+    private async Task Eliminar(int Id)
     {
-        if (Filtro == "ClienteId")
-        {
-            if (int.TryParse(ValorFiltro, out int clienteId))
-            {
-                ListaEventos = await eventoService
-                    .Listar(c => c.ClienteId == clienteId);
-            }
-        }
+        await eventoService.Eliminar(Id);
+        await CargarEventosPorRol(); //Refresca la lista segun el rol del usuario
     }
-
-    @*Metodo Restablecer para restablecer filtros y clientes*@
-    private async Task Restablecer()
-    {
-        ListaEventos = await eventoService.Listar(e=>e.UserId == userId);
-        Filtro = string.Empty;
-        ValorFiltro = string.Empty;
-    }
+    
 }
