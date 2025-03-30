@@ -23,6 +23,7 @@
                     <div class="col-3">
                         <InputSelect class="form-select" @bind-Value="@Filtro">
                             <option value="" selected disabled>Elija una opci&oacute;n</option>
+                            <option value="PresupuestoId">Id de tu presupuesto</option>
                         </InputSelect>
                     </div>
                     <div class="col-4">
@@ -37,6 +38,18 @@
                             </a>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Desde</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaDesde" />
+                        </div>
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Hasta</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaHasta" />
+                        </div>
+                    </div>
+                    
                 </div>
 
                 <table class="table table-hover">
@@ -81,23 +94,36 @@
     public List<Eventos> EventosList { get; set; } = new List<Eventos>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
+    public string? userId;
+    public DateTime? FechaDesde { get; set; } = DateTime.Now;
+    public DateTime? FechaHasta { get; set; } = DateTime.Now.AddDays(7);
 
     protected override async Task OnInitializedAsync()
     {
         var userId = await user.ObtenerUserId();
         EventosList = await eventosService.Listar(e => e.EventoId > 0);
-        ListaPresupuestos = await presupuestoService.Listar(p => p.UserId == userId);
+        await CargarPresupuestosPorRol();
     }
 
-    @*Buscar técnicos según el filtro*@
+    @*Buscar Presupuestos según el filtro*@
     private async Task Buscar()
     {
-        if (Filtro == "ClienteId")
+        
+        if (string.IsNullOrEmpty(userId))
         {
-            if (int.TryParse(ValorFiltro, out int clienteId))
+            userId = await user.ObtenerUserId(); 
+        }
+        var usuarioActual = await user.EncontrarUsuario(userId);
+        var roles = await user.ObtenerRol(usuarioActual);
+        bool esAdmin = roles.Contains("Admin");
+        
+        if (Filtro == "PresupuestoId")
+        {
+            if (int.TryParse(ValorFiltro, out int PresupuestoId))
             {
-                ListaPresupuestos = await presupuestoService
-                    .Listar(c => c.EventoId >0 );
+                ListaPresupuestos = await presupuestoService.Listar(p =>
+                    p.PresupuestoId == PresupuestoId &&
+                    (esAdmin || p.UserId == userId)); 
             }
         }
     }
@@ -117,4 +143,28 @@
         await presupuestoService.Eliminar(id);
         ListaPresupuestos = await presupuestoService.Listar(p => true);
     }
+    
+    private async Task CargarPresupuestosPorRol()
+    {
+        userId = await user.ObtenerUserId();
+        var currentUser = await user.EncontrarUsuario(userId);
+        if (currentUser != null)
+        {
+            var roles = await user.ObtenerRol(currentUser); 
+            bool isAdmin = roles.Contains("Admin");
+            if (isAdmin)
+            {
+                ListaPresupuestos = await presupuestoService.Listar(e => true);
+            }
+            else
+            {
+                ListaPresupuestos = await presupuestoService.Listar(e => e.UserId == userId);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Usuario no encontrado");
+        }
+    }
+    
 }
