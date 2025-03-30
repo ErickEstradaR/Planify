@@ -1,34 +1,54 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Planify.Data;
 
-namespace Planify.Services;
-
-public class UserService
+namespace Planify.Services
 {
-    private readonly AuthenticationStateProvider _authenticationStateProvider;
-
-    public UserService(AuthenticationStateProvider authenticationStateProvider)
+    public class UserService
     {
-        _authenticationStateProvider = authenticationStateProvider;
-    }
-
-    public async Task<string?> ObtenerUserId()
-    {
-        try
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly UserManager<ApplicationUser> _userManager;
+        
+        public UserService(AuthenticationStateProvider authenticationStateProvider, UserManager<ApplicationUser> userManager)
         {
-            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
+            _authenticationStateProvider = authenticationStateProvider;
+            _userManager = userManager;  // Inyectamos el UserManager
+        }
 
-            if (user.Identity is { IsAuthenticated: true })
+        // Método para obtener el UserId del usuario autenticado
+        public async Task<string?> ObtenerUserId()
+        {
+            try
             {
-                return user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                       ?? user.FindFirst("sub")?.Value;
+                var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+
+                if (user.Identity is { IsAuthenticated: true })
+                {
+                    return user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                           ?? user.FindFirst("sub")?.Value;
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error obteniendo UserId: {ex.Message}");
+            }
+            return null;
         }
-        catch (Exception ex)
+        
+        public async Task<List<string>> ObtenerRol(ApplicationUser user)
         {
-            Console.WriteLine($"Error obteniendo UserId: {ex.Message}");
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList(); 
         }
-        return null;
+        
+        public async Task<ApplicationUser?> EncontrarUsuario(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return null;
+
+            return await _userManager.FindByIdAsync(userId);
+        }
     }
 }
