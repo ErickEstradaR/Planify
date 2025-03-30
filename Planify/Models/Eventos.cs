@@ -22,7 +22,7 @@ public class Eventos
     public string Direccion { get; set; }
 
     [Required(ErrorMessage = "La fecha del evento es obligatoria.")]
-    public DateTime FechaEvento { get; set; }
+    public DateTime FechaEvento { get; set; } = DateTime.Now.AddDays(7); 
     
     public string UserId { get; set; }
     
