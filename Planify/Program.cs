@@ -26,6 +26,7 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -41,6 +42,7 @@ builder.Services.AddScoped<ClientesService>();
 builder.Services.AddScoped<EventosService>();
 builder.Services.AddScoped<PresupuestosService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserManager<ApplicationUser>>();
 
 var app = builder.Build();
 
