@@ -109,8 +109,11 @@
 </AuthorizeView>
 
 @code {
-    
-    public Presupuestos Presupuesto { get; set; } = new Presupuestos();
+
+    public Presupuestos Presupuesto { get; set; } = new Presupuestos()
+    {
+        PresupuestosDetalles = new List<PresupuestosDetalle>() // Inicializa la lista
+    };
     public List<Eventos> ListaEventos = new List<Eventos>();
     public PresupuestosDetalle DetalleSeleccionado { get; set; } = new();
     public List<Articulos> ListaArticulos = new List<Articulos>();
@@ -122,15 +125,26 @@
         { 
             userId = await user.ObtenerUserId();
             Presupuesto.UserId = userId;
-            await presupuestoService.Guardar(Presupuesto);
-            nav.NavigateTo("/Presupuestos");
+         
+            bool resultado = await presupuestoService.Guardar(Presupuesto);
+
+            if (resultado)
+            {
+                nav.NavigateTo("/Presupuestos");
+                StateHasChanged(); 
+            }
+            else
+            {
+                Console.WriteLine("Hubo un problema guardando el presupuesto.");
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            Console.WriteLine($"Error al guardar el presupuesto: {e.Message}");
         }
     }
+
+
     
     protected override async Task OnInitializedAsync()
     {
