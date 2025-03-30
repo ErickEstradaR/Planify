@@ -56,7 +56,7 @@
                             <td>@presupuesto.PresupuestoId</td>
                             <td>@presupuesto.Evento?.NombreEvento</td>
                             <td>@presupuesto.Fecha.ToShortDateString()</td>
-                            <td>@presupuesto.MontoTotal</td>
+                            <td>@presupuesto.MontoTotal.ToString("N2")</td>
                             <td class="text-center">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Presupuesto/Edit/@presupuesto.PresupuestoId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(presupuesto.PresupuestoId)"></button>
@@ -99,8 +99,6 @@
                 ListaPresupuestos = await presupuestoService
                     .Listar(c => c.EventoId >0 );
             }
-
-
         }
     }
 
