@@ -34,7 +34,7 @@
                                     
                                     <label class="form-control-label px-3">Evento<span class="text-danger"> *</span></label>
                                     <InputSelect class="formulario-control" @bind-Value="Presupuesto.EventoId">
-                                        <option value="0" selected disabled> Seleccione un evento </option>
+                                        <option value="0" selected disabled readonly> Seleccione un evento </option>
                                         @foreach (var evento in ListaEventos)
                                         {
                                             <option value="@evento.EventoId"> @evento.NombreEvento
@@ -63,7 +63,7 @@
                             <table class="table table-light">
                                 <thead class="table table-striped">
                                 <tr class="text-center">
-                                    <th>Articulo</th>
+                                    <th class="text-lg-start">Articulo</th>
                                     <th>Cantidad</th>
                                     <th>Remover</th>
                                 </tr>
@@ -74,7 +74,7 @@
                                 @foreach (var detalle in Presupuesto.PresupuestosDetalles)
                                 {
                                     <tr class="text-center">
-                                        <td>@detalle.Articulo.Nombre</td>
+                                        <td class="text-lg-start">@detalle.Articulo.Nombre</td>
                                         <td>@detalle.Cantidad</td>
                                         <td>
                                             <button type="button" @onclick="() => EliminarDetalle(detalle)" class="btn btn-outline-danger bi bi-trash mt-2"> Remover</button>
@@ -96,9 +96,10 @@
                         
                         @*Botones*@ 
                         <div class="row justify-content-end">
-                                <div class="formulario-grupo col-sm-6">
-                                    <button type="submit" class="btn-enviar btn-block">Guardar</button>
-                                </div>
+                            <div class="formulario-grupo col-sm-6">
+                                <a href="/Presupuestos" class="btn btn-secondary">Volver</a>
+                                <button type="submit" class="btn-enviar btn-block">Guardar</button>
+                            </div>
                             </div>
                         </div>
                     </div>
