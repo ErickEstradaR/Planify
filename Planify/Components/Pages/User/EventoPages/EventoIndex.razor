@@ -85,8 +85,28 @@
     protected override async Task OnInitializedAsync()
     {
         userId = await user.ObtenerUserId();
-        ListaEventos = await eventoService.Listar(e=>e.UserId == userId);
+        var currentUser = await user.EncontrarUsuario(userId);
+        if (currentUser != null)
+        {
+            var roles = await user.ObtenerRol(currentUser); 
+            bool isAdmin = roles.Contains("Admin");
+            
+            if (isAdmin)
+            {
+                ListaEventos = await eventoService.Listar(e => true);
+            }
+            else
+            {
+                ListaEventos = await eventoService.Listar(e => e.UserId == userId);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Usuario no encontrado");
+        }
     }
+
+
 
     @*Buscar técnicos según el filtro*@
     private async Task Buscar()
