@@ -55,10 +55,29 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
     /// </summary>
     /// <param name="presupuesto">Objeto Presupuestos con los cambios.</param>
     /// <returns>True si se modifica correctamente, false si no.</returns>
-    private async Task<bool> Modificar(Presupuestos presupuesto)
+    private async Task<bool> Modificar(Presupuestos presupuestos)
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
-        contexto.Presupuestos.Update(presupuesto);
+
+        var presupuestoOriginal = await contexto.Presupuestos.Include(p => p.PresupuestosDetalles).FirstOrDefaultAsync(p => p.PresupuestoId == presupuestos.PresupuestoId);
+
+        if (presupuestoOriginal == null)
+            return false;
+        
+        contexto.Entry(presupuestoOriginal).CurrentValues.SetValues(presupuestos);
+
+        foreach (var detalle in presupuestos.PresupuestosDetalles)
+        {
+            var detalleExistente = presupuestoOriginal.PresupuestosDetalles.FirstOrDefault(d => d.DetalleId == detalle.DetalleId);
+            if (detalleExistente != null)
+            {
+                contexto.Entry(detalleExistente).CurrentValues.SetValues(detalle);
+            }
+            else
+            {
+                presupuestoOriginal.PresupuestosDetalles.Add(detalle); 
+            }
+        }
         return await contexto.SaveChangesAsync() > 0;
     }
 
@@ -98,7 +117,10 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
     public async Task<Presupuestos?> Buscar(int presupuestoId)
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
-        return await contexto.Presupuestos.FirstOrDefaultAsync(p => p.PresupuestoId == presupuestoId);
+        return await contexto.Presupuestos.Include(p=>p.Evento)
+            .Include(p=>p.PresupuestosDetalles).
+            ThenInclude(pd=>pd.Articulo).
+            FirstOrDefaultAsync(p => p.PresupuestoId == presupuestoId);
     }
     
     private async Task AfectarDetalle(IEnumerable<PresupuestosDetalle> detalles)
