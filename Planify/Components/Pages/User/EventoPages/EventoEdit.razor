@@ -16,41 +16,41 @@
         <DataAnnotationsValidator/>
 
             <PageTitle>Crea tu evento!</PageTitle>
-            <div class="container-fluid px-1 py-5 mx-auto">
+            <div class="container-formulario px-1 py-5 mx-auto">
                 <div class="row d-flex justify-content-center">
-                    <div class="card">
-                        <p class="blue-text">@Evento.NombreEvento</p>
-                        <div class="card">
+                    <div class="card-formulario">
+                        <p class="texto-azul">@Evento.NombreEvento</p>
+                        <div class="card-formulario">
                             <h5 class="text-center mb-4">Modificar evento</h5>
 
                             <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Id de tu evento<span class="text-danger"> *</span></label>
-                                    <InputNumber id="nombre" class="form-control" @bind-Value="Evento.EventoId" readonly/>
+                                    <InputNumber id="nombre" class="formulario-control" @bind-Value="Evento.EventoId" readonly/>
                                 </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Nombre de tu evento<span class="text-danger"> *</span></label>
-                                    <InputText id="nombre" class="form-control" @bind-Value="Evento.NombreEvento"/>
+                                    <InputText id="nombre" class="formulario-control" @bind-Value="Evento.NombreEvento"/>
                                 </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
-                                    <InputText id="numCedula" class="form-control" @bind-Value="Evento.Descripcion"/>
+                                    <InputText id="numCedula" class="formulario-control" @bind-Value="Evento.Descripcion"/>
                                 </div>
                             </div>
 
                             <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Donde será?<span class="text-danger"> *</span></label>
-                                    <InputText id="correo" class="form-control" @bind-Value="Evento.Direccion" />
+                                    <InputText id="correo" class="formulario-control" @bind-Value="Evento.Direccion" />
                                 </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
-                                    <InputDate id="telefono" class="form-control" @bind-Value="Evento.FechaEvento" />
+                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
                                 </div>
                             </div>
-                            <div class="form-group col-sm-6 flex-column d-flex">
+                            <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                 <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
-                                <InputSelect id="categoria" class="form-control" @bind-Value="Evento.Categoria">
+                                <InputSelect id="categoria" class="formulario-control" @bind-Value="Evento.Categoria">
                                     <option value="">Seleccione una categoría</option>
                                     @foreach (var categoria in CategoriasEventos)
                                     {
@@ -65,7 +65,7 @@
                                     <a href="/Eventos" class="btn btn-secondary">
                                         <span class="bi bi-arrow-left" ></span> Volver
                                     </a>
-                                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                                    <button type="submit" class="btn-enviar btn-block">Guardar</button>
                                     
                                 </div>
                             </div>
@@ -110,7 +110,6 @@
         await eventosServices.Guardar(Evento);
     }
     
-
     protected override async Task OnInitializedAsync()
     {
         userId = await user.ObtenerUserId();
@@ -122,9 +121,4 @@
         await eventosServices.Eliminar(id);
         nav.NavigateTo("/Eventos");
     }
-
 }
-
-
-
-
