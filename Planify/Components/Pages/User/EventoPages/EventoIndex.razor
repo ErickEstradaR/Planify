@@ -45,11 +45,11 @@
                     <thead class="table table-striped text-black">
                     <tr>
                         <th>EventoId</th>
+                        <th>Nombre</th>
                         <th>Categor&iacute;a</th>
-                        <th>Descripci&oacute;n</th>
                         <th>Direcci&oacute;n</th>
-                        <th>Fecha Evento</th>
-                        <th>Editar</th>
+                        <th>Fecha del Evento</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -58,9 +58,9 @@
                     {
                         <tr>
                             <td>@evento.EventoId</td>
-                            <td>@evento.Categoria</td>
+                            <td>@evento.NombreEvento</td>
                             <td>@evento.Direccion</td>
-                            <td>@evento.Descripcion</td>
+                            <td>@evento.Categoria</td>
                             <td>@evento.FechaEvento.ToShortDateString()</td>
                             <td class="text-center">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@evento.EventoId"></a>
@@ -98,8 +98,6 @@
                 ListaEventos = await eventoService
                     .Listar(c => c.ClienteId == clienteId);
             }
-
-
         }
     }
 
