@@ -63,9 +63,19 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
 
         if (presupuestoOriginal == null)
             return false;
-        
+    
         contexto.Entry(presupuestoOriginal).CurrentValues.SetValues(presupuestos);
-
+        presupuestoOriginal.MontoTotal = 0;
+        
+        var detallesAEliminar = presupuestoOriginal.PresupuestosDetalles
+            .Where(d => !presupuestos.PresupuestosDetalles.Any(pd => pd.DetalleId == d.DetalleId))
+            .ToList();
+    
+        foreach (var detalleAEliminar in detallesAEliminar)
+        {
+            presupuestoOriginal.PresupuestosDetalles.Remove(detalleAEliminar);
+        }
+        
         foreach (var detalle in presupuestos.PresupuestosDetalles)
         {
             var detalleExistente = presupuestoOriginal.PresupuestosDetalles.FirstOrDefault(d => d.DetalleId == detalle.DetalleId);
@@ -77,9 +87,12 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
             {
                 presupuestoOriginal.PresupuestosDetalles.Add(detalle); 
             }
+            presupuestoOriginal.MontoTotal += detalle.Cantidad * detalle.Articulo.Precio;
         }
+    
         return await contexto.SaveChangesAsync() > 0;
     }
+
 
     /// <summary>
     /// Elimina un presupuesto de la base de datos por su Id.
