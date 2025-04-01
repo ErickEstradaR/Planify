@@ -1,0 +1,194 @@
+body{
+    background-color: #1C2127;
+}
+
+.container {
+    position: relative;
+    text-align: center;
+    max-width: 500px;  /* Limitar el tamaño */
+    width: 100%;
+}
+
+.message {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;  /* Reducir el tamaño de fuente */
+    color: white;
+    font-weight: 500;
+    position: relative;
+    top: 20px;  /* Ajustar posición */
+    text-align: center;
+}
+
+.message2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;  /* Reducir el tamaño de fuente */
+    color: white;
+    font-weight: 300;
+    width: 100%;
+    position: relative;
+    top: 40px;  /* Ajustar posición */
+    text-align: center;
+}
+
+.neon {
+    text-align: center;
+    width: 100%;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 48px;  /* Reducir tamaño de fuente */
+    color: #5BE0B3;
+    letter-spacing: 2px;  /* Ajustar el espaciado */
+    text-shadow: 0 0 5px #6EECC1;
+    animation: flux 2s linear infinite;
+    margin-top: 10px;
+}
+
+.trash {
+    width: 120px;  /* Reducir tamaño */
+    height: 160px;  /* Reducir tamaño */
+    background-color: #585F67;
+    top: 10px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.can {
+    width: 140px;  /* Reducir tamaño */
+    height: 20px;  /* Reducir tamaño */
+    background-color: #6B737C;
+    border-radius: 15px 15px 0 0;
+}
+
+.door-frame {
+    height: 350px;  /* Reducir tamaño */
+    width: 220px;  /* Reducir tamaño */
+    border-radius: 90px 90px 0 0;
+    background-color: #8594A5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.door {
+    height: 300px;  /* Reducir tamaño */
+    width: 180px;  /* Reducir tamaño */
+    border-radius: 70px 70px 0 0;
+    background-color: #A0AEC0;
+}
+
+.eye {
+    top: 10px;  /* Ajustar posición */
+    left: 25px;
+    height: 5px;
+    width: 10px;  /* Reducir tamaño */
+    border-radius: 50%;
+    background-color: white;
+    animation: eye 7s ease-in-out infinite;
+    position: absolute;
+}
+
+.eye2 {
+    left: 55px;
+}
+
+.window {
+    height: 30px;  /* Reducir tamaño */
+    width: 100px;  /* Reducir tamaño */
+    background-color: #1C2127;
+    border-radius: 3px;
+    margin: 40px auto;
+    position: relative;
+}
+
+.leaf {
+    height: 30px;  /* Reducir tamaño */
+    width: 100px;  /* Reducir tamaño */
+    background-color: #8594A5;
+    border-radius: 3px;
+    margin: 40px auto;
+    animation: leaf 7s infinite;
+    transform-origin: right;
+}
+
+.handle {
+    height: 6px;  /* Reducir tamaño */
+    width: 40px;  /* Reducir tamaño */
+    border-radius: 4px;
+    background-color: #EBF3FC;
+    position: absolute;
+    margin-top: 200px;
+    margin-left: 20px;
+}
+
+.rectangle {
+    height: 60px;  /* Reducir tamaño */
+    width: 20px;  /* Reducir tamaño */
+    background-color: #CBD8E6;
+    border-radius: 4px;
+    position: absolute;
+    margin-top: 180px;
+    margin-left: 10px;
+}
+
+.espacio{
+    margin-bottom: 40px;
+}
+
+@keyframes leaf {
+    0% {
+        transform: scaleX(1);
+    }
+    5% {
+        transform: scaleX(0.2);
+    }
+    70% {
+        transform: scaleX(0.2);
+    }
+    75% {
+        transform: scaleX(1);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes eye {
+    0% {
+        opacity: 0;
+        transform: translateX(0)
+    }
+    5% {
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+        transform: translateX(0)
+    }
+    20% {
+        transform: translateX(10px);  /* Reducir el movimiento */
+    }
+    35% {
+        transform: translateX(10px);
+    }
+    40% {
+        transform: translateX(-10px);
+    }
+    60% {
+        transform: translateX(-10px);
+    }
+    65% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes flux {
+    0%,
+    100% {
+        text-shadow: 0 0 5px #00FFC6, 0 0 15px #00FFC6, 0 0 50px #00FFC6, 0 0 50px #00FFC6, 0 0 2px #B9FFE8, 2px 2px 3px #12E29C;
+        color: #4BFFEF;
+    }
+    50% {
+        text-shadow: 0 0 3px #00B58D, 0 0 7px #00B58D, 0 0 25px #00B58D, 0 0 25px #00B58D, 0 0 2px #00B58D, 2px 2px 3px #006A60;
+        color: #63D3AE;
+    }
+}
