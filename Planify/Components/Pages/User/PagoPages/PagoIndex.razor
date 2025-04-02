@@ -1,0 +1,128 @@
+@page "/Pagos"
+@inject PagosService pagoService
+@inject NavigationManager nav
+@inject UserService user
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+<AuthorizeView>
+    <Authorized>
+<PageTitle>Tus pagos</PageTitle>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card header">
+            </div>
+            <div class="card-body">
+                <h5 class="text-center">Pagos</h5>
+                <div class="row">
+                    <div class="col-3">
+                        @*Filtro de búsqueda*@
+                        <InputSelect class="form-select" @bind-Value="@Filtro">
+                            <option value="" selected disabled>Elija una opci&oacute;n</option>
+                            <option value="PagoId">Id de Pago</option>
+                        </InputSelect>
+                    </div>
+                    
+                    @*Botones*@
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+                            </div>
+                            <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
+                            <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Desde</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaDesde" />
+                        </div>
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Hasta</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaHasta" />
+                        </div>
+                    </div>
+                </div>
+                
+                @*Tabla de Eventos*@
+                <table class="table table-hover">
+                    <thead class="table table-striped text-black">
+                    <tr>
+                        <th>PagoId</th>
+                        <th>Monto Total</th>
+                        <th>Fecha</th>
+                        <th>Ver</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @*Eventos*@
+                    @foreach (var pago in ListaPagos)
+                    {
+                        <tr>
+                            <td>@pago.PagoId</td>
+                            <td>@pago.Monto.ToString("N2")</td>
+                            <td>@pago.FechaCobro.ToShortDateString()</td>
+                            <td class="text-center">
+                                <a class="btn btn-outline-secondary bi bi-eye text-lg-start" href="/VerPago/@pago.PagoId/"></a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    public List<Pagos> ListaPagos { get; set; } = new List<Pagos>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+    public string? userId;
+    public DateTime? FechaDesde { get; set; } = DateTime.Now;
+    public DateTime? FechaHasta { get; set; } = DateTime.Now.AddDays(7);
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            userId = await user.ObtenerUserId(); 
+        }
+        ListaPagos = await pagoService.Listar(p => p.userId == userId);
+    }
+    
+    @*Buscar según el filtro*@
+    private async Task Buscar()
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            userId = await user.ObtenerUserId(); 
+        }
+        var usuarioActual = await user.EncontrarUsuario(userId);
+        
+        if (Filtro == "PagoId")
+        {
+            if (int.TryParse(ValorFiltro, out int PagoId))
+            {
+                ListaPagos = await pagoService.Listar(p =>
+                    p.PagoId == PagoId &&
+                    p.userId == userId);
+            }
+        }
+    }
+
+    @*Metodo Restablecer para restablecer filtros*@
+    private async Task Restablecer()
+    {
+        ListaPagos = await pagoService.Listar(p => p.userId == userId);
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+    }
+}
