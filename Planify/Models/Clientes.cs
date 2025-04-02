@@ -21,9 +21,7 @@ public class Clientes
     public string NumTelefono { get; set; }
     [Required]
     public string Direccion { get; set; }
-    [Required(ErrorMessage = "El correo es obligatorio.")]
-    [EmailAddress(ErrorMessage = "El correo no tiene un formato válido.")]
-    public string Correo { get; set; }
+  
     [Required]
     public DateTime FechaIngreso { get; set; }
     [Required]
