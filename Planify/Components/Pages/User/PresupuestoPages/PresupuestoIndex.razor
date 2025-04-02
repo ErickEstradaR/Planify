@@ -60,6 +60,7 @@
                         <th>Fecha</th>
                         <th>Monto Total</th>
                         <th>Acciones</th>
+                        <th>Pagar</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -70,10 +71,13 @@
                             <td>@presupuesto.Evento?.NombreEvento</td>
                             <td>@presupuesto.Fecha.ToShortDateString()</td>
                             <td>@presupuesto.MontoTotal.ToString("N2")</td>
-                            <td class="text-center">
+                            <td class="text-lg-start">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Presupuesto/Edit/@presupuesto.PresupuestoId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(presupuesto.PresupuestoId)"></button>
-                                </td>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-primary bi bi-credit-card" href="/Pago/@userId/@presupuesto.PresupuestoId"></a>
+                            </td>
                         </tr>
                     }
                     </tbody>
@@ -101,8 +105,7 @@
     protected override async Task OnInitializedAsync()
     {
         var userId = await user.ObtenerUserId();
-        EventosList = await eventosService.Listar(e => e.EventoId > 0);
-        await CargarPresupuestosPorRol();
+        ListaPresupuestos = await presupuestoService.Listar(p => p.UserId == userId);
     }
 
     @*Buscar Presupuestos según el filtro*@
@@ -113,9 +116,6 @@
         {
             userId = await user.ObtenerUserId(); 
         }
-        var usuarioActual = await user.EncontrarUsuario(userId);
-        var roles = await user.ObtenerRol(usuarioActual);
-        bool esAdmin = roles.Contains("Admin");
         
         if (Filtro == "PresupuestoId")
         {
@@ -123,16 +123,17 @@
             {
                 ListaPresupuestos = await presupuestoService.Listar(p =>
                     p.PresupuestoId == PresupuestoId &&
-                    (esAdmin || p.UserId == userId)); 
+                     p.UserId == userId &&
+                    p.Fecha >= FechaDesde &&
+                    p.Fecha <= FechaHasta); 
             }
         }
     }
 
-    @*Metodo Restablecer para restablecer filtros y clientes*@
+    @*Metodo Restablecer para restablecer filtros*@
     private async Task Restablecer()
     {
         
-        ListaPresupuestos = await presupuestoService.Listar(c => c.EventoId > 0);
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
     }
@@ -141,29 +142,7 @@
     private async Task Eliminar(int id)
     {
         await presupuestoService.Eliminar(id);
-        ListaPresupuestos = await presupuestoService.Listar(p => true);
+        ListaPresupuestos = await presupuestoService.Listar(p => p.UserId == userId);
     }
     
-    private async Task CargarPresupuestosPorRol()
-    {
-        userId = await user.ObtenerUserId();
-        var currentUser = await user.EncontrarUsuario(userId);
-        if (currentUser != null)
-        {
-            var roles = await user.ObtenerRol(currentUser); 
-            bool isAdmin = roles.Contains("Admin");
-            if (isAdmin)
-            {
-                ListaPresupuestos = await presupuestoService.Listar(e => true);
-            }
-            else
-            {
-                ListaPresupuestos = await presupuestoService.Listar(e => e.UserId == userId);
-            }
-        }
-        else
-        {
-            Console.WriteLine("Usuario no encontrado");
-        }
-    }
 }

@@ -101,7 +101,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await CargarEventosPorRol();
+        ListaEventos = await eventoService.Listar(e => e.UserId == userId);
     }
     
     @*Buscar según el filtro*@
@@ -111,9 +111,6 @@
         {
             userId = await user.ObtenerUserId(); 
         }
-        var usuarioActual = await user.EncontrarUsuario(userId);
-        var roles = await user.ObtenerRol(usuarioActual);
-        bool esAdmin = roles.Contains("Admin");
         
         if (Filtro == "EventoId")
         {
@@ -121,7 +118,9 @@
             {
                 ListaEventos = await eventoService.Listar(e =>
                     e.EventoId == EventoId &&
-                    (esAdmin || e.UserId == userId)); 
+                    e.UserId == userId &&
+                    e.FechaEvento >= FechaDesde &&
+                    e.FechaEvento <= FechaHasta ); 
             }
         }
         else if (Filtro == "NombreEvento")
@@ -129,8 +128,7 @@
             ListaEventos = await eventoService.Listar(e =>
                 e.NombreEvento.ToLower().Contains(ValorFiltro.ToLower()) &&
                 e.FechaEvento >= FechaDesde &&
-                e.FechaEvento <= FechaHasta &&
-                (esAdmin || e.UserId == userId)); 
+                e.FechaEvento <= FechaHasta && e.UserId == userId); 
         }
         else if (Filtro == "Categoria")
         {
@@ -138,47 +136,22 @@
                 e.Categoria.ToLower().Contains(ValorFiltro.ToLower()) &&
                 e.FechaEvento >= FechaDesde &&
                 e.FechaEvento <= FechaHasta &&
-                (esAdmin || e.UserId == userId)); 
+                e.UserId == userId); 
         }
     }
 
     @*Metodo Restablecer para restablecer filtros*@
     private async Task Restablecer()
     {
-        CargarEventosPorRol();
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
+        ListaEventos = await eventoService.Listar(e => e.UserId == userId);
     }
     
-    @*Metodo para cargar eventos segun rol del usuario*@
-    private async Task CargarEventosPorRol()
-    {
-        userId = await user.ObtenerUserId();
-        var currentUser = await user.EncontrarUsuario(userId);
-        if (currentUser != null)
-        {
-            var roles = await user.ObtenerRol(currentUser); 
-            bool isAdmin = roles.Contains("Admin");
-            if (isAdmin)
-            {
-                ListaEventos = await eventoService.Listar(e => true);
-            }
-            else
-            {
-                ListaEventos = await eventoService.Listar(e => e.UserId == userId);
-            }
-        }
-        else
-        {
-            Console.WriteLine("Usuario no encontrado");
-        }
-    }
-
     @*Metodo Eliminar*@
     private async Task Eliminar(int Id)
     {
         await eventoService.Eliminar(Id);
-        await CargarEventosPorRol(); //Refresca la lista segun el rol del usuario
+        ListaEventos = await eventoService.Listar(e => e.UserId == userId);
     }
-    
 }
