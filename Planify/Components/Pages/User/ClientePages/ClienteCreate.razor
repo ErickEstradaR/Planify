@@ -15,89 +15,64 @@
             <ValidationSummary/>
 
             <PageTitle>Registro de clientes</PageTitle>
-            <div class="container-formulario px-1 py-5 mx-auto">
-                <div class="row d-flex justify-content-center">
-                    <div class="card-formulario">
-                        
-                        @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
-                        @if (Cliente == null)
-                        {
-                            <h3>Empecemos</h3>
-                            <p class="texto-azul">Solo responde algunas preguntas<br>
-                                así te conoceremos un poco más </p>
-                        }
-                        @if (Cliente != null)
-                        {
-                            <h3 class="text-center">Bienvenido! @Cliente.Nombre</h3>
-                            <p class="texto-azul">Aquí puedes modificar tu información<br>
-                                Te equivocaste en algo?</p>
-                        }
-                        
-                        <div class="card-formulario">
-                            
-                            @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
-                            @if (Cliente == null)
-                            {
-                                <h5 class="text-center mb-4">Cuéntanos sobre tí</h5>
-                            }
-                            @if (Cliente != null)
-                            {
-                                <h5 class="text-center mb-4">Modifica tu información</h5>
-                            }
-                            @*----------------------*@
+            <div class="container-formulario  mt-50 mb-50">
+            <div class="row d-flex justify-content-center">
+                
+                @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
+                @if (Cliente == null)
+                {
+                    <h3>Empecemos</h3>
+                    <p class="texto-azul">Solo responde algunas preguntas<br>
+                        así te conoceremos un poco más </p>
+                }
+                @if (Cliente != null)
+                {
+                    <h1 class="text-center">Bienvenido!</h1>
+                    <h2 class="texto-azul text-center">@Cliente.Nombre</h2>
+                }
 
-                            @*Nombre del Cliente*@
-                            <div class="row justify-content-between text-left">
-                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Tu Nombre<span class="text-danger"> *</span></label>
-                                    <InputText id="nombre" class="formulario-control" @bind-Value="Cliente.Nombre"/>
-                                </div>
-                                
-                                @*Número de cedula del cliente*@
-                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
-                                    <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"/>
-                                </div>
-                            </div>
+                <div class="naav">
+                    <ul class="mx-auto">
+                        <li class="activee"><a href="Cliente">Sobre ti</a></li>
+                        <li><a href="/Tarjetas">Métodos de pago</a></li>
+                    </ul>
+                </div>
+                @*Nombre del Cliente*@
+                <div class="row justify-content-between text-left">
+                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                        <label class="form-control-label px-3">Tu Nombre<span class="text-danger"> *</span></label>
+                        <InputText id="nombre" class="formulario-control" @bind-Value="Cliente.Nombre"/>
+                    </div>
 
-                            @*Correo Electrónico del cliente*@
-                            <div class="row justify-content-between text-left">
-                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Correo Electrónico<span class="text-danger"> *</span></label>
-                                    <InputText id="correo" class="formulario-control" @bind-Value="Cliente.Correo" type="email"/>
-                                </div>
-                                
-                                @*Número de telefono del cliente*@
-                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
-                                    <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"/>
-                                </div>
-                            </div>
+                    @*Número de cedula del cliente*@
+                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                        <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
+                        <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"/>
+                    </div>
 
-                            @*Fecha de ingreso, se mantiene readonly ya que se asigna automático*@
-                            <div class="row justify-content-between text-left">
-                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Fecha de Ingreso<span class="text-danger"> *</span></label>
-                                    <InputDate id="fechaIngreso" class="formulario-control" @bind-Value="Cliente.FechaIngreso"/>
-                                </div>
-                            </div>
+                    @*Número de telefono del cliente*@
+                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                        <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
+                        <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"/>
+                    </div>
+                </div>
+                
+                </div>
+                   
+                
+                @*Dirección del Cliente*@
+                <div class="row justify-content-between text-left">
+                    <div class="formulario-grupo col-sm-12 flex-column d-flex">
+                        <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
+                        <InputText id="direccion" class="formulario-control" @bind-Value="Cliente.Direccion"/>
+                    </div>
+                </div>
 
-                            @*Dirección del Cliente*@
-                            <div class="row justify-content-between text-left">
-                                <div class="formulario-grupo col-sm-12 flex-column d-flex">
-                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                                    <InputText id="direccion" class="formulario-control" @bind-Value="Cliente.Direccion"/>
-                                </div>
-                            </div>
-                            
-                            @*Botón Guardar*@
-                            <div class="row justify-content-end">
-                                <div class="d-flex justify-content-center">
-                                    <a href="/" class="btn btn-secondary">Volver</a>
-                                    <button type="submit" class="btn-enviar btn-block">Guardar</button>
-                                </div>
-                            </div>
-                        </div>
+                @*Botón Guardar*@
+                <div class="row justify-content-end">
+                    <div class="d-flex justify-content-center">
+                        <a href="/" class="btn btn-secondary">Volver</a>
+                        <button type="submit" class="btn-enviar btn-block">Guardar</button>
                     </div>
                 </div>
             </div>
