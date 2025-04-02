@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Planify.Components;
 using Planify.Components.Account;
 using Planify.Data;
+using Planify.Models;
 using Planify.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,7 @@ builder.Services.AddScoped<EventosService>();
 builder.Services.AddScoped<PresupuestosService>();
 builder.Services.AddScoped<TarjetasService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PagosService>();
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 
 
