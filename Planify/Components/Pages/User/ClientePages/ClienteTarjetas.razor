@@ -1,0 +1,128 @@
+@page "/Tarjetas"
+@using Microsoft.AspNetCore.Authorization
+@inject ClientesService clienteService
+@inject TarjetasService TarjetaService
+@inject UserService user
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+<AuthorizeView>
+    <Authorized>
+
+        <PageTitle>Registro de clientes</PageTitle>
+        <div class="container-formulario  mt-50 mb-50">
+            <div class="row d-flex justify-content-center">
+                <h1 class="text-center">Billetera</h1>
+                <div class="naav">
+                    <ul class="mx-auto">
+                        <li><a href="Cliente">Sobre ti</a></li>
+                        <li class="activee"><a href="/Tarjetas">Métodos de pago</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr/>
+            <h2 class="text-lg-start texto-azul">Mis tarjetas</h2>
+            @foreach (var tarjeta in ListaTarjetas)
+            {
+            <div class="tarjeta-container">
+                <div class="tarjeta-info">
+                    @if (tarjeta.Banco == "Mastercard")
+                    {
+                    <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743556867/Mastercard-Logo-PNG-HD-1_asmjkb.webp" alt="Logo" class="tarjeta-logo">
+                    }
+                    else if (tarjeta.Banco == "Visa")
+                    {
+                    <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743557099/download-visa-card-logo-icon-png-735811696866915avdywnhoab_o46s2o.png" alt="Logo" class="tarjeta-logo">
+                    }
+                    else
+                    {
+                    <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743557212/524369-200_uvpsk6.png" alt="Logo" class="tarjeta-logo">
+
+                    }
+                    <span class="tarjeta-numero">@tarjeta.ApodoTarjetaCredito</span>
+                </div>
+                <button class="tarjeta-boton" @onclick="() => Eliminar(tarjeta.TarjetaId)">Eliminar tarjeta</button>
+            </div>
+            }
+            <hr/>
+            <EditForm Model="Tarjeta" OnValidSubmit="Guardar" FormName="Tarjeta">
+                <ChildContent Context="editTarjeta">
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary/>
+                    <div class="row justify-content-between text-left">
+
+                        <h2 class="text-lg-start texto-azul">Agregar Tarjeta</h2>
+
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Número de tu tarjeta<span class="text-danger"> *</span></label>
+                            <InputText id="" class="formulario-control" @bind-Value="Tarjeta.NumTarjetaCredito"/>
+                        </div>
+
+                        @*Fecha de expiración*@
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Fecha de expiración<span class="text-danger"> *</span></label>
+                            <InputDate id="fechaExp" class="formulario-control" @bind-Value="Tarjeta.FechaExp"/>
+                        </div>
+
+                        @*CCV*@
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Ccv<span class="text-danger"> *</span></label>
+                            <InputNumber id="ccv" class="formulario-control" @bind-Value="Tarjeta.Ccv"/>
+                        </div>
+
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Apodo<span class="text-danger"> *</span></label>
+                            <InputText class="formulario-control" @bind-Value="Tarjeta.ApodoTarjetaCredito"/>
+                        </div>
+                    </div>
+
+                   
+                    <div class="form-footer text-center mt-2">
+                        <div class="d-flex justify-content-center">
+                            <a href="/" class="btn btn-secondary">Volver</a>
+                            <button type="submit" class="btn-enviar btn-block">Guardar</button>
+                        </div>
+                    </div>
+                </ChildContent>
+            </EditForm>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    public TarjetasCredito Tarjeta { get; set; } = new TarjetasCredito();
+    public List<TarjetasCredito> ListaTarjetas { get; set; } = new List<TarjetasCredito>();
+    public string userId { get; set; }
+    public Clientes Cliente { get; set; } = new Clientes();
+    private async Task Guardar()
+    {
+        await ObtenerCliente();
+        Tarjeta.Banco = await TarjetaService.ObtenerTipoTarjeta(Tarjeta.NumTarjetaCredito);
+        await TarjetaService.Guardar(Tarjeta);
+        ListaTarjetas = await TarjetaService.Listar(t => t.TarjetaId > 0);
+        Tarjeta = new TarjetasCredito();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerCliente();
+        ListaTarjetas = await TarjetaService.Listar(t => t.ClienteId == Cliente.ClienteId);
+    }
+
+    private async Task Eliminar(int id)
+    {
+        await TarjetaService.Eliminar(id);
+        await ObtenerCliente();
+        ListaTarjetas = await TarjetaService.Listar(t => t.ClienteId == Cliente.ClienteId);
+    }
+
+    private async Task ObtenerCliente()
+    {
+        userId = await user.ObtenerUserId();
+        Cliente = await clienteService.BuscarPorUserId(userId);
+        Tarjeta.ClienteId = Cliente.ClienteId;
+    }
+    
+}
