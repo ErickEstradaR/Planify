@@ -1,0 +1,36 @@
+@page "/payment-success"
+
+<div class="container">
+    <div class="success-card">
+        <div class="success-icon">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="40" fill="#4CAF50" />
+                <path d="M32 40L38 46L48 34" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <h1>Pago Exitoso!</h1>
+        <p>Gracias por tu pedido, tu transacción ha sido completada exitosamente.</p>
+
+        <div class="order-details">
+            <div class="detail-row">
+                <span>ID de tu transacción:</span>
+                <span>@TransactionId</span>
+            </div>
+            <div class="detail-row">
+                <span>Fecha:</span>
+                <span>@DateTime.Now.ToString("MMM dd, yyyy")</span>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a class="primary-button" href="/Pagos">Volver</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] 
+    public string TransactionId { get; set; } = "PLN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+}
+
