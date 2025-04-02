@@ -1,15 +1,18 @@
 
+.form-footer {
+    padding-top: 20px; 
+}
+
 .body-formulario {
     font-family: 'Poppins', sans-serif;
     background-color: #f8f9fa;
 }
 
 .container-formulario {
-    max-width: 700px;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    width: 600px;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 3rem 3.5rem 4px;
 }
 
 .card-formulario {
@@ -26,10 +29,10 @@ h5.form-titulo {
 }
 
 .texto-azul {
-    color: #007bff;
+    color: orangered;
     font-weight: bold;
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.9rem;
 }
 
 .formulario-grupo label {
@@ -71,4 +74,66 @@ h5.form-titulo {
 
 .btn-enviar:hover {
     background: #0056b3;
+}
+
+.naav{
+    display: flex;
+}
+.naav ul{
+    list-style-type: none;
+    display: flex;
+    padding-inline-start: unset;
+    margin-bottom: 6vh;
+}
+.naav li{
+    padding: 1rem;
+}
+.naav li a{
+    color: black;
+    text-decoration: none;
+}
+.activee{
+    border-bottom: 2px solid black;
+    font-weight: bold;
+}
+
+.tarjeta-container {
+    width: 450px;
+    background: #f3f3f3;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-info {
+    display: flex;
+    align-items: center;
+}
+
+.tarjeta-logo {
+    width: 40px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.tarjeta-numero {
+    font-size: 18px;
+    color: #777;
+    font-weight: 600;
+}
+
+.tarjeta-boton {
+    border: none;
+    background: none;
+    color: #777;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tarjeta-boton:hover {
+    color: #d9534f;
 }
