@@ -10,8 +10,8 @@ public class Pagos
     public int PagoId { get; set; } 
     public double Monto { get; set; } 
     public DateTime FechaCobro { get; set; } 
-    public string HoraEnvio { get; set; }
     public string DireccionEnvio { get; set; }
+    public string userId { get; set; }
     
     public int PresupuestoId { get; set; }
     [ForeignKey("PresupuestoId")]
