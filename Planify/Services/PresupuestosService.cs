@@ -149,4 +149,14 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
         }
         await contexto.SaveChangesAsync();
     }
+    
+    public async Task<List<PresupuestosDetalle>> ListarDetalle(Expression<Func<PresupuestosDetalle, bool>> criterio)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        return await contexto.PresupuestosDetalles
+            .AsNoTracking().Include(pd=>pd.Articulo)
+            .Where(criterio)
+            .ToListAsync();
+    }
+    
 }
