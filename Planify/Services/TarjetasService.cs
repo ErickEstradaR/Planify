@@ -8,9 +8,9 @@ namespace Planify.Services;
 public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
 {
      /// <summary>
-    /// Este método inserta o modifica un articulo en la base de datos dependiendo de si este existe o no
+    /// Este método inserta  una tarjeta en la base de datos
     /// </summary>
-    /// <param name="articulo"></param>
+    /// <param name="tarjeta"></param>
     /// <returns>retorna un bool si la operacion es exitosa y false si falla</returns>
     public async Task<bool> Guardar(TarjetasCredito tarjeta)
     {
@@ -19,7 +19,7 @@ public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
      
     
     /// <summary>
-    /// Permite insertar un nuevo Tarjeta en la base de datos
+    /// Permite insertar una nueva Tarjeta en la base de datos
     /// </summary>
     /// <param name="tarjeta"></param>
     /// <returns>Verdadero si es insertado exitosamente y falso si no</returns>
@@ -47,7 +47,7 @@ public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
     }
     
     /// <summary>
-    /// Lista los TarjetasCredito según el criterio que reciba
+    /// Lista las TarjetasCredito según el criterio que reciba
     /// </summary>
     /// <param name="Criterio"></param>
     /// <returns>Una lista de TarjetasCredito que cumplan con el criterio</returns>
@@ -58,7 +58,7 @@ public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
     }
     
     /// <summary>
-    /// permite buscar un Tarjeta segun su Id
+    /// permite buscar una Tarjeta segun su Id
     /// </summary>
     /// <param name="TarjetaId"></param>
     /// <returns>Retorna un objeto Tarjeta</returns>
@@ -68,6 +68,11 @@ public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
         return await contexto.TarjetasCredito.FirstOrDefaultAsync(a => a.TarjetaId == TarjetaId);
     }
     
+    /// <summary>
+    /// Obtiene el tipo de tarjeta de la tarjeta de credito segun su numero de tarjeta
+    /// </summary>
+    /// <param name="numeroTarjeta"></param>
+    /// <returns>un string dependiendo el banco al que pertenezca</returns>
     public async Task<string?> ObtenerTipoTarjeta(string numeroTarjeta)
     {
         if (string.IsNullOrEmpty(numeroTarjeta) || numeroTarjeta.Length < 13 || numeroTarjeta.Length > 19)
@@ -86,5 +91,4 @@ public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
         }
         return "Desconocido";
     }
-    
 }
