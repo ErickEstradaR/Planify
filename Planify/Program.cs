@@ -40,8 +40,10 @@ builder.Services.AddScoped<ArticulosService>();
 builder.Services.AddScoped<ClientesService>();
 builder.Services.AddScoped<EventosService>();
 builder.Services.AddScoped<PresupuestosService>();
+builder.Services.AddScoped<TarjetasService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
+
 
 var app = builder.Build();
 
