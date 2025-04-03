@@ -1,0 +1,147 @@
+@page "/Admin/VerPago/{pagoId:int}"
+@inject TarjetasService tarjetas
+@inject PresupuestosService presupuestoService
+@inject PagosService pagoServices
+@inject NavigationManager nav
+@rendermode InteractiveServer
+
+<section style="background-color: #eee;">
+  <div class="container py-5">
+  <div class="card">
+    <div class="card-body">
+      <div class="row d-flex justify-content-center pb-5">
+        <div class="col-md-7 col-xl-5 mb-4 mb-md-0">
+          <div class="py-4 d-flex flex-row">
+            <h5><span class="far fa-check-square pe-2"></span><b>PLANIFY</b> |</h5>
+            <span class="ps-2">Detalles del Pago</span>
+          </div>
+          <h4>Detalles de la Transacción</h4>
+          <div class="rounded d-flex bg-body-tertiary">
+          </div>
+          <hr/>
+          <h4>Artículos</h4>
+          <table class="tabla-sin-lineas">
+            <thead>
+            <tr>
+              <th>Artículo</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Precio Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var articulo in detalle)
+            {
+              <tr>
+                <td>@articulo.Articulo.Nombre</td>
+                <td>@articulo.Cantidad</td>
+                <td class="text-lg-start">$@articulo.Articulo.Precio</td>
+                <td>$@((articulo.Articulo.Precio * articulo.Cantidad).ToString("N2"))</td>
+              </tr>
+            }
+            </tbody>
+          </table>
+          <hr/>
+          <div class="pt-2">
+            <div class="d-flex pb-2">
+              <div class="ms-auto">
+              </div>
+            </div>
+            <div class="formulario-grupo col-sm-6 flex-column d-flex">
+              <label class="form-control-label px-3">Dirección de Envío:</label>
+              <div class="formulario-control-static">@pago.DireccionEnvio</div>
+            </div>
+            <hr/>
+              
+            <div class="pb-3">
+              <div class="d-flex flex-row pb-3">
+                <h4>Método de Pago</h4>
+              </div>
+              <div class="tarjeta-container">
+                <div class="tarjeta-info">
+                  @if (tarjeta.Banco == "Mastercard")
+                  {
+                    <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743556867/Mastercard-Logo-PNG-HD-1_asmjkb.webp" alt="Logo Mastercard" class="tarjeta-logo">
+                  }
+                  else if (tarjeta.Banco == "Visa")
+                  {
+                    <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743557099/download-visa-card-logo-icon-png-735811696866915avdywnhoab_o46s2o.png" alt="Logo Visa" class="tarjeta-logo">
+                  }
+                  else
+                  {
+                    <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743557212/524369-200_uvpsk6.png" alt="Logo Desconocido" class="tarjeta-logo">
+                  }
+                  <span class="tarjeta-numero">@tarjeta.ApodoTarjetaCredito</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-5 col-xl-4 offset-xl-1">
+          <div class="py-4 d-flex justify-content-end">
+            <h6><a href="/Admin/Pagos">Volver</a></h6>
+          </div>
+          <div class="rounded d-flex flex-column p-2 bg-body-tertiary">
+            <div class="p-2 me-3">
+              <h4>Resumen de la Orden</h4>
+            </div>
+            <div class="p-2 d-flex">
+              <div class="col-8">Subtotal</div>
+              <div class="ms-auto">$@pago.Monto.ToString("N2")</div>
+            </div>
+            <div class="p-2 d-flex">
+              <div class="col-8">ITBIS</div>
+              <div class="ms-auto">+@Itbis.ToString("N2") </div>
+            </div>
+            <div class="p-2 d-flex">
+              <div class="col-8">Envío</div>
+              <div class="ms-auto">+ $250.00</div>
+            </div>
+            <div class="border-top px-2 mx-2"></div>
+            <div class="p-2 d-flex pt-3">
+              <div class="col-8"><b>Total</b></div>
+              <div class="ms-auto"><b class="text-success">$@Total.ToString("N2")</b></div>
+            </div>
+            <div class="p-2">
+              <div class="col-12">
+                <span class="badge bg-success text-white p-2">Pagado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+@code{
+  
+  [Parameter] public int pagoId { get; set; }
+  
+  public Pagos pago { get; set; } = new Pagos();
+  public TarjetasCredito tarjeta { get; set; } = new TarjetasCredito();
+  public List<PresupuestosDetalle> detalle { get; set; } = new List<PresupuestosDetalle>();
+  public Presupuestos presupuesto { get; set; } = new Presupuestos();
+  private double Itbis;
+  private double Total;
+  
+  protected override async Task OnInitializedAsync()
+  {
+    pago = await pagoServices.Buscar(17);
+    if (pago == null)
+    {
+      nav.NavigateTo("/Admin/Pagos");
+      return;
+    }
+    
+    presupuesto = await presupuestoService.Buscar(pago.PresupuestoId);
+    detalle = await presupuestoService.ListarDetalle(p => p.PresupuestoId == pago.PresupuestoId);
+    tarjeta = await tarjetas.Buscar(pago.TarjetaId);
+    
+    Itbis = pago.Monto * 0.18;
+    Total = pago.Monto + Itbis + 250;
+  }
+  
+}
