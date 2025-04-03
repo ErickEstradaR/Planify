@@ -74,6 +74,10 @@
                     </tbody>
                 </table>
             </div>
+            <div class="card-footer d-flex justify-content-between">
+                <label class="ms-3"><strong>Cantidad de Pagos:</strong>@ListaPagos.Count</label>
+                <label class="ms-3"><strong>Total:</strong>@ListaPagos.Sum(p=>p.Monto).ToString("N2")</label>
+            </div>
         </div>
     </div>
     </Authorized>
