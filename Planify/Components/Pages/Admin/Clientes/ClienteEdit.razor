@@ -1,0 +1,89 @@
+@page "/Admin/Cliente/{id:int}"
+@inject ClientesService clienteServices
+@inject NavigationManager nav 
+@inject UserService user
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+
+
+@attribute [Authorize (Roles = "Admin")]
+<AuthorizeView>
+    <Authorized>
+    <EditForm Model="Cliente" OnValidSubmit="Guardar" FormName="Cliente">
+        <ChildContent Context="editcliente">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <PageTitle>Editar Cliente</PageTitle>
+            <div class="container-formulario  mt-50 mb-50">
+            <div class="row d-flex justify-content-center">
+                
+                @if (Cliente != null)
+                {
+                    <h2 class="texto-azul text-center">@Cliente.Nombre</h2>
+                }
+                <hr/>
+                
+                @*Nombre del Cliente*@
+                <div class="row justify-content-between text-left">
+                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                        <label class="form-control-label px-3">Nombre<span class="text-danger"> *</span></label>
+                        <InputText id="nombre" class="formulario-control" @bind-Value="Cliente.Nombre"/>
+                    </div>
+
+                    @*Número de cedula del cliente*@
+                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                        <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
+                        <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"/>
+                    </div>
+
+                    @*Número de telefono del cliente*@
+                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                        <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
+                        <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"/>
+                    </div>
+                </div>
+                </div>
+                
+                @*Dirección del Cliente*@
+                <div class="row justify-content-between text-left">
+                    <div class="formulario-grupo col-sm-12 flex-column d-flex">
+                        <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
+                        <InputText id="direccion" class="formulario-control" @bind-Value="Cliente.Direccion"/>
+                    </div>
+                </div>
+
+                @*Botón Guardar*@
+                <div class="row justify-content-end">
+                    <div class="d-flex justify-content-center">
+                        <a href="/Admin/Clientes" class="btn btn-secondary">Volver</a>
+                        <button type="submit" class="btn-enviar btn-block">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </ChildContent>
+    </EditForm>
+    </Authorized>
+</AuthorizeView>
+
+
+@code
+{
+    [Parameter]
+    public int id { get; set; }
+    private Clientes Cliente { get; set; } = new Clientes();
+    public string MensajeError { get; set; }
+    public string? userId;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Cliente = await clienteServices.Buscar(id);
+    }
+    
+    private async Task Guardar()
+    {
+        await clienteServices.Guardar(Cliente);
+        nav.NavigateTo("/");
+    }
+    
+}
