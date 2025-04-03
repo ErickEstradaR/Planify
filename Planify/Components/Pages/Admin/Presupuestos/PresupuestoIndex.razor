@@ -1,0 +1,126 @@
+@page "/Admin/Presupuestos"
+@inject PresupuestosService presupuestoService
+@inject EventosService eventosService
+@inject NavigationManager nav
+@inject UserService user
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.IdentityModel.Tokens
+
+@attribute [Authorize (Roles = "Admin")]
+<AuthorizeView>
+    <Authorized>
+<PageTitle>Presupuestos</PageTitle>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card header">
+            </div>
+            <div class="card-body">
+                <h5 class="text-center">Presupuestos</h5>
+                <div class="row">
+                    <div class="col-3">
+                        <InputSelect class="form-select" @bind-Value="@Filtro">
+                            <option value="" selected disabled>Elija una opci&oacute;n</option>
+                            <option value="PresupuestoId">Id de tu presupuesto</option>
+                        </InputSelect>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+                            </div>
+                            <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
+                            <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Desde</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaDesde" />
+                        </div>
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Hasta</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaHasta" />
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-hover">
+                    <thead class="table table-striped text-black">
+                    <tr>
+                        <th>PresupuestoId</th>
+                        <th>Evento</th>
+                        <th>Fecha</th>
+                        <th>Monto Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var presupuesto in ListaPresupuestos)
+                    {
+                        <tr>
+                            <td>@presupuesto.PresupuestoId</td>
+                            <td>@presupuesto.Evento?.NombreEvento</td>
+                            <td>@presupuesto.Fecha.ToShortDateString()</td>
+                            <td>@presupuesto.MontoTotal.ToString("N2")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <label class="ms-3"><strong>Cantidad:</strong> @ListaPresupuestos.Count</label>
+                <label class="ms-3"><strong>Total Presupuestado:</strong>@ListaPresupuestos.Sum(p=>p.MontoTotal).ToString("N2")</label>
+            </div>
+        </div>
+    </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    public List<Presupuestos> ListaPresupuestos { get; set; } = new List<Presupuestos>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+    public DateTime? FechaDesde { get; set; } = DateTime.Now;
+    public DateTime? FechaHasta { get; set; } = DateTime.Now.AddDays(7);
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaPresupuestos = await presupuestoService.Listar(p => p.PresupuestoId > 0);
+    }
+
+    @*Buscar Presupuestos según el filtro*@
+    private async Task Buscar()
+    {
+        
+        if (Filtro == "PresupuestoId")
+        {
+            if (int.TryParse(ValorFiltro, out int PresupuestoId))
+            {
+                ListaPresupuestos = await presupuestoService.Listar(p =>
+                    p.PresupuestoId == PresupuestoId &&
+                    p.Fecha >= FechaDesde &&
+                    p.Fecha <= FechaHasta); 
+            }
+        }
+    }
+
+    @*Metodo Restablecer para restablecer filtros*@
+    private async Task Restablecer()
+    {
+        
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+    }
+    
+
+    private async Task Eliminar(int id)
+    {
+        await presupuestoService.Eliminar(id);
+        ListaPresupuestos = await presupuestoService.Listar(p => p.PresupuestoId > 0);
+    }
+    
+}
