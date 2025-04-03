@@ -1,0 +1,122 @@
+@page "/Admin/Articulos"
+@inject ArticulosService articuloService
+@inject NavigationManager nav
+@inject UserService user
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Admin")]
+<AuthorizeView>
+    <Authorized>
+<PageTitle>Articulos</PageTitle>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card header">
+            </div>
+            <div class="card-body">
+                <h5 class="text-center">Articulos</h5>
+                <div class="row">
+                    <div class="col-3">
+                        @*Filtro de búsqueda*@
+                        <InputSelect class="form-select" @bind-Value="@Filtro">
+                            <option value="" selected disabled>Elija una opci&oacute;n</option>
+                            <option value="ArticuloId">Id de Articulo</option>
+                            <option value="NombreArticulo">Nombre del Articulo</option>
+                        </InputSelect>
+                    </div>
+                    
+                    @*Botones*@
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+                            </div>
+                            <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
+                            <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                        </div>
+                    </div>
+                </div>
+                
+                @*Tabla de Articulos*@
+                <table class="table table-hover">
+                    <thead class="table table-striped text-black">
+                    <tr>
+                        <th>ArticuloId</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Categoria</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    
+                    @*Articulos*@
+                    @foreach (var articulo in ListaArticulos)
+                    {
+                        <tr>
+                            <td>@articulo.ArticuloId</td>
+                            <td>@articulo.Nombre</td>
+                            <td>@articulo.Precio.ToString("N2")/td>
+                            <td>@articulo.Categoria</td>
+                            <td class="text-lg-start">
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Articulo/Edit/@articulo.ArticuloId"></a>
+                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(articulo.ArticuloId)"></button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div class="card-footer d-flex justify-content-between">
+                    <label class="ms-3"><strong>Total de Articulos:</strong>@ListaArticulos.Count</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    public List<Articulos> ListaArticulos { get; set; } = new List<Articulos>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        ListaArticulos = await articuloService.Listar(a => a.ArticuloId >0 );
+    }
+    
+    @*Buscar según el filtro*@
+    private async Task Buscar()
+    {
+        if (Filtro == "ArticuloId")
+        {
+            if (int.TryParse(ValorFiltro, out int ArticuloId))
+            {
+                ListaArticulos = await articuloService.Listar(a =>
+                    a.ArticuloId == ArticuloId); 
+            }
+        }
+        else if (Filtro == "NombreArticulo")
+        {
+            ListaArticulos = await articuloService.Listar(c =>
+                c.Nombre.ToLower().Contains(ValorFiltro.ToLower())); 
+        }
+    }
+
+    @*Metodo Restablecer para restablecer filtros*@
+    private async Task Restablecer()
+    {
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+        ListaArticulos = await articuloService.Listar(a => a.ArticuloId>0);
+    }
+    
+    @*Metodo Eliminar*@
+    private async Task Eliminar(int Id)
+    {
+        await articuloService.Eliminar(Id);
+        ListaArticulos = await articuloService.Listar(a => a.ArticuloId > 0);
+    }
+}
