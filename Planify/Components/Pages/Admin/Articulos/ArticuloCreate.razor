@@ -1,0 +1,96 @@
+@page "/Admin/Articulo/Create"
+@inject ArticulosService articuloService
+@inject NavigationManager nav 
+@inject UserService user
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+<AuthorizeView>
+    <Authorized>
+    <EditForm Model="Articulo" OnValidSubmit="Guardar" FormName="Evento">
+        <ChildContent Context="eventoContext">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <PageTitle>Registrar Articuo</PageTitle>
+            <div class="container-formulario px-1 py-5 mx-auto">
+                <div class="row d-flex justify-content-center">
+                    <div class="card-formulario">
+                        <p class="texto-azul">Crea un Articulo</p>
+                        <div class="card-formulario">
+
+                            <div class="row justify-content-between text-left">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">D<span class="text-danger"> *</span></label>
+                                    <InputNumber id="id" class="formulario-control" @bind-Value="Articulo.ArticuloId" />
+                                </div>
+                            </div>
+                            
+                            <div class="row justify-content-between text-left">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Nombre Articulo<span class="text-danger"> *</span></label>
+                                    <InputText id="nombre" class="formulario-control" @bind-Value="Articulo.Nombre"/>
+                                </div>
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
+                                    <InputText id="numCedula" class="formulario-control" @bind-Value="Articulo.Descripcion"/>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">D<span class="text-danger"> *</span></label>
+                                    <InputNumber id="precio" class="formulario-control" @bind-Value="Articulo.Precio"/>
+                                </div>
+                            </div>
+                            <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
+                                <InputSelect id="categoria" class="formulario-control" @bind-Value="Articulo.Categoria">
+                                    <option value="">Seleccione una categoría</option>
+                                    @foreach (var categoria in CategoriasEventos)
+                                    {
+                                        <option value="@categoria">@categoria</option>
+                                    }
+                                </InputSelect>
+                            </div>
+
+                        </div>
+                            <div class="row justify-content-end">
+                                <div class="text-center">
+                                    <a href="/Eventos" class="btn btn-secondary">Volver</a>
+                                    <button type="submit" class="btn-enviar">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </ChildContent>
+    </EditForm>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    
+    private List<string> CategoriasEventos = new()
+    {
+        "Decoración",
+        "Iluminación y Sonido",
+        "Mobiliario",
+        "Vajilla y Mantelería",
+        "Souvenirs",
+        "Alimentos y Bebidas",
+        "Fotografía y Video",
+        "Animación y Entretenimiento"
+    };
+    
+    public Articulos Articulo { get; set; } = new Articulos();
+
+    private async Task Guardar()
+    {
+        await articuloService.Guardar(Articulo);
+        nav.NavigateTo("/Admin/Articulos");
+    }
+}
