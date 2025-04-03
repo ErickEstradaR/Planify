@@ -1,0 +1,139 @@
+@page "/Admin/Clientes"
+@inject ClientesService clienteService
+@inject NavigationManager nav
+@inject UserService user
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Admin")]
+<AuthorizeView>
+    <Authorized>
+<PageTitle>Clientes</PageTitle>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card header">
+            </div>
+            <div class="card-body">
+                <h5 class="text-center">Mis Clientes</h5>
+                <div class="row">
+                    <div class="col-3">
+                        @*Filtro de búsqueda*@
+                        <InputSelect class="form-select" @bind-Value="@Filtro">
+                            <option value="" selected disabled>Elija una opci&oacute;n</option>
+                            <option value="ClienteId">Id de Evento</option>
+                            <option value="NombreCliente">Nombre del cliente</option>
+                        </InputSelect>
+                    </div>
+                    
+                    @*Botones*@
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+                            </div>
+                            <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
+                            <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Desde</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaDesde" />
+                        </div>
+                        <div class="col-3">
+                            <label class="col-form-label"><strong>Hasta</strong></label>
+                            <InputDate class="form-control" @bind-Value="FechaHasta" />
+                        </div>
+                    </div>
+                </div>
+                
+                @*Tabla de Eventos*@
+                <table class="table table-hover">
+                    <thead class="table table-striped text-black">
+                    <tr>
+                        <th>ClienteId</th>
+                        <th>Nombre</th>
+                        <th>Direcci&oacute;n</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @*Eventos*@
+                    @foreach (var cliente in ListaClientes)
+                    {
+                        <tr>
+                            <td>@cliente.ClienteId</td>
+                            <td>@cliente.Nombre</td>
+                            <td>@cliente.Direccion</td>
+                            <td>@cliente.FechaIngreso.ToShortDateString()</td>
+                            <td class="text-lg-start">
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@cliente.ClienteId"></a>
+                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(cliente.ClienteId)"></button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div class="card-footer d-flex justify-content-between">
+                    <label class="ms-3"><strong>Total de Clientes: @ListaClientes.Count</strong></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+    public DateTime? FechaDesde { get; set; } = DateTime.Now;
+    public DateTime? FechaHasta { get; set; } = DateTime.Now.AddDays(7);
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaClientes = await clienteService.Listar(c => c.ClienteId >0 );
+    }
+    
+    @*Buscar según el filtro*@
+    private async Task Buscar()
+    {
+        if (Filtro == "ClienteId")
+        {
+            if (int.TryParse(ValorFiltro, out int ClienteId))
+            {
+                ListaClientes = await clienteService.Listar(c =>
+                    c.ClienteId == ClienteId &&
+                    c.FechaIngreso >= FechaDesde &&
+                    c.FechaIngreso <= FechaHasta ); 
+            }
+        }
+        else if (Filtro == "NombreCliente")
+        {
+            ListaClientes = await clienteService.Listar(c =>
+                c.Nombre.ToLower().Contains(ValorFiltro.ToLower()) &&
+                c.FechaIngreso >= FechaDesde &&
+                c.FechaIngreso <= FechaHasta); 
+        }
+    }
+
+    @*Metodo Restablecer para restablecer filtros*@
+    private async Task Restablecer()
+    {
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+        ListaClientes = await clienteService.Listar(c => c.ClienteId>0);
+    }
+    
+    @*Metodo Eliminar*@
+    private async Task Eliminar(int Id)
+    {
+        await clienteService.Eliminar(Id);
+        ListaClientes = await clienteService.Listar(c => c.ClienteId > 0);
+    }
+}
