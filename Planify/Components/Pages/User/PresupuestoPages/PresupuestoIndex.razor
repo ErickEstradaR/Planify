@@ -75,7 +75,7 @@
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Presupuesto/Edit/@presupuesto.PresupuestoId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(presupuesto.PresupuestoId)"></button>
                             </td>
-                            <td>
+                            <td class="text-lg-start">
                                 <a class="btn btn-outline-primary bi bi-credit-card" href="/Pago/@userId/@presupuesto.PresupuestoId"></a>
                             </td>
                         </tr>
@@ -84,8 +84,12 @@
                 </table>
                 @if (ListaPresupuestos.IsNullOrEmpty())
                 {
-                <h6>Parece que no tienes presupuestos creados, que tal si hacemos uno?</h6>
+                    <h6>Parece que no tienes presupuestos creados, que tal si hacemos uno?</h6>
                 }
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <label class="ms-3"><strong>Cantidad:</strong> @ListaPresupuestos.Count</label>
+                <label class="ms-3"><strong>Total Presupuestado:</strong>@ListaPresupuestos.Sum(p=>p.MontoTotal).ToString("N2")</label>
             </div>
         </div>
     </div>
