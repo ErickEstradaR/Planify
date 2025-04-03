@@ -1,0 +1,106 @@
+@page "/Admin/Evento/Edit/{id:int}"
+@inject EventosService eventosServices
+@inject ClientesService clienteServices
+@inject NavigationManager nav 
+@inject UserService user
+@rendermode InteractiveServer
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Admin")]
+<AuthorizeView>
+    <Authorized>
+    <EditForm Model="Evento" OnValidSubmit="Guardar" FormName="Evento">
+        <ChildContent Context="eventoContext">
+        <DataAnnotationsValidator/>
+
+            <PageTitle>Editar Evento</PageTitle>
+            <div class="container-formulario px-1 py-5 mx-auto">
+                <div class="row d-flex justify-content-center">
+                    <div class="card-formulario">
+                        <p class="texto-azul">@Evento.NombreEvento</p>
+                        <div class="card-formulario">
+                            <h5 class="text-center mb-4">Modificar evento</h5>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Id evento<span class="text-danger"> *</span></label>
+                                    <InputNumber id="nombre" class="formulario-control" @bind-Value="Evento.EventoId" readonly/>
+                                </div>
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Nombre evento<span class="text-danger"> *</span></label>
+                                    <InputText id="nombre" class="formulario-control" @bind-Value="Evento.NombreEvento"/>
+                                </div>
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
+                                    <InputText id="numCedula" class="formulario-control" @bind-Value="Evento.Descripcion"/>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
+                                    <InputText id="correo" class="formulario-control" @bind-Value="Evento.Direccion" />
+                                </div>
+                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Fecha<span class="text-danger"> *</span></label>
+                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
+                                </div>
+                            </div>
+                            <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
+                                <InputSelect id="categoria" class="formulario-control" @bind-Value="Evento.Categoria">
+                                    <option value="">Seleccione una categoría</option>
+                                    @foreach (var categoria in CategoriasEventos)
+                                    {
+                                    <option value="@categoria">@categoria</option>
+                                    }
+                                </InputSelect>
+                            </div>
+
+                        </div>
+                            <div class="row justify-content-end">
+                                <div class="text-center">
+                                    <a href="/Admin/Eventos" class="btn btn-secondary">
+                                        <span class="bi bi-arrow-left" ></span> Volver
+                                    </a>
+                                    <button type="submit" class="btn-enviar btn-block">Guardar</button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </ChildContent>
+    </EditForm>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    
+    [Parameter]
+    public int id { get; set; }
+    public Eventos Evento { get; set; } = new Eventos();
+    
+    private List<string> CategoriasEventos = new()
+    {
+        "Boda",
+        "Cumpleaños",
+        "Conferencia",
+        "Fiesta privada",
+        "Lanzamiento de producto",
+        "Reunión corporativa",
+        "Otro"
+    };
+    
+    private async Task Guardar()
+    {
+        await eventosServices.Guardar(Evento);
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Evento = await eventosServices.Buscar(id);
+    }
+}
