@@ -58,10 +58,10 @@
                         <tr>
                             <td>@articulo.ArticuloId</td>
                             <td>@articulo.Nombre</td>
-                            <td>@articulo.Precio.ToString("N2")/td>
+                            <td>@articulo.Precio.ToString("N2")</td>
                             <td>@articulo.Categoria</td>
                             <td class="text-lg-start">
-                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Articulo/Edit/@articulo.ArticuloId"></a>
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Admin/Articulo/Edit/@articulo.ArticuloId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(articulo.ArticuloId)"></button>
                             </td>
                         </tr>
