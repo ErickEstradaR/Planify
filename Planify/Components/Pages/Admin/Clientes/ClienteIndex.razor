@@ -71,7 +71,7 @@
                             <td>@cliente.Direccion</td>
                             <td>@cliente.FechaIngreso.ToShortDateString()</td>
                             <td class="text-lg-start">
-                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@cliente.ClienteId"></a>
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Admin/Cliente/Edit/@cliente.ClienteId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(cliente.ClienteId)"></button>
                             </td>
                         </tr>
