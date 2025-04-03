@@ -1,7 +1,6 @@
 @page "/Admin/Cliente/{id:int}"
 @inject ClientesService clienteServices
 @inject NavigationManager nav 
-@inject UserService user
 @using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
 
@@ -72,8 +71,6 @@
     [Parameter]
     public int id { get; set; }
     private Clientes Cliente { get; set; } = new Clientes();
-    public string MensajeError { get; set; }
-    public string? userId;
     
     protected override async Task OnInitializedAsync()
     {

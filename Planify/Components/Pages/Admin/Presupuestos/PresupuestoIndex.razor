@@ -1,13 +1,9 @@
 @page "/Admin/Presupuestos"
 @inject PresupuestosService presupuestoService
-@inject EventosService eventosService
-@inject NavigationManager nav
-@inject UserService user
+
 @rendermode InteractiveServer
 
-@using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.IdentityModel.Tokens
 
 @attribute [Authorize (Roles = "Admin")]
 <AuthorizeView>
