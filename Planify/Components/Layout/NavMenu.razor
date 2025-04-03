@@ -18,7 +18,33 @@
                     </NavLink>
                 </li>
 
-                <AuthorizeView>
+                <AuthorizeView Roles="Admin">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Admin/Articulos">
+                            <span class="bi bi-tag" aria-hidden="true"></span> Articulos
+                        </NavLink>
+                    </li>
+
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Admin/Clientes">
+                            <span class="bi bi-person" aria-hidden="true"></span> Clientes
+                        </NavLink>
+                    </li>
+
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Admin/Eventos">
+                            <span class="bi bi-list-nested" aria-hidden="true"></span> Eventos
+                        </NavLink>
+                    </li>
+
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Admin/Presupuestos">
+                            <span class="bi-receipt-cutoff" aria-hidden="true"></span> Presupuestos
+                        </NavLink>
+                    </li>
+                </AuthorizeView>
+                
+                <AuthorizeView Roles="User">
                 <li class="nav-item">
                     <NavLink class="nav-link" href="/Cliente">
                         <span class="bi bi-person" aria-hidden="true"></span> Sobre ti
