@@ -115,10 +115,4 @@
         userId = await user.ObtenerUserId();
         Evento = await eventosServices.Buscar(id);
     }
-
-    public async Task Eliminar()
-    {
-        await eventosServices.Eliminar(id);
-        nav.NavigateTo("/Eventos");
-    }
 }
