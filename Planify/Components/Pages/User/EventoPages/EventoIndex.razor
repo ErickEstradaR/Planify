@@ -104,6 +104,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (string.IsNullOrEmpty(userId))
+        {
+            userId = await user.ObtenerUserId(); 
+        }
         ListaEventos = await eventoService.Listar(e => e.UserId == userId);
     }
     
