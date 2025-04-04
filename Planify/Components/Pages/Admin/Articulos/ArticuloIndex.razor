@@ -33,7 +33,10 @@
                             </div>
                             <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
                             <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
-                        </div>
+                            <a href="/Admin/Articulo/Create" class="btn btn-success">
+                                <span class="bi bi-plus-square"></span> Crear
+                            </a>
+                            </div>
                     </div>
                 </div>
                 
@@ -67,7 +70,8 @@
                     </tbody>
                 </table>
                 <div class="card-footer d-flex justify-content-between">
-                    <label class="ms-3"><strong>Total de Articulos:</strong>@ListaArticulos.Count</label>
+                    <label class="ms-3"><strong>Total de Articulos:</strong> @ListaArticulos.Count</label>
+                    <label class="ms-3"><strong>Valor total de Articulos:</strong> @ListaArticulos.Sum(a=>a.Precio).ToString("N2")</label>
                 </div>
             </div>
         </div>
@@ -80,6 +84,7 @@
     public List<Articulos> ListaArticulos { get; set; } = new List<Articulos>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
+   
     protected override async Task OnInitializedAsync()
     {
         ListaArticulos = await articuloService.Listar(a => a.ArticuloId >0 );
