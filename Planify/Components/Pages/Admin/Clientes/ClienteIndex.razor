@@ -70,8 +70,7 @@
                             <td>@cliente.FechaIngreso.ToShortDateString()</td>
                             <td class="text-lg-start">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Admin/Cliente/Edit/@cliente.ClienteId"></a>
-                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(cliente.ClienteId)"></button>
-                            </td>
+                                </td>
                         </tr>
                     }
                     </tbody>
@@ -128,10 +127,4 @@
         ListaClientes = await clienteService.Listar(c => c.ClienteId>0);
     }
     
-    @*Metodo Eliminar*@
-    private async Task Eliminar(int Id)
-    {
-        await clienteService.Eliminar(Id);
-        ListaClientes = await clienteService.Listar(c => c.ClienteId > 0);
-    }
 }
