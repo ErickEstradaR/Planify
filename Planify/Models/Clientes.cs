@@ -19,7 +19,9 @@ public class Clientes
     [Required(ErrorMessage = "El número de teléfono es obligatorio.")]
     [RegularExpression(@"^\d{3}-\d{3}-\d{4}$", ErrorMessage = "El formato del teléfono debe ser XXX-XXX-XXXX.")]
     public string NumTelefono { get; set; }
-    [Required]
+    [Required (ErrorMessage = "La dirección es obligatoria")]
+    [MinLength(10, ErrorMessage = "La dirección debe tener al menos 10 caracteres.")]
+    [MaxLength(100, ErrorMessage = "La dirección no puede superar los 100 caracteres.")]
     public string Direccion { get; set; }
   
     [Required]
