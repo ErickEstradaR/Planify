@@ -49,13 +49,15 @@
                     @*Número de cedula del cliente*@
                     <div class="formulario-grupo col-sm-6 flex-column d-flex">
                         <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
-                        <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"/>
+                        <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"
+                                   placeholder="XXX-XXXXXXX-X"/>
                     </div>
 
                     @*Número de telefono del cliente*@
                     <div class="formulario-grupo col-sm-6 flex-column d-flex">
                         <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
-                        <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"/>
+                        <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"
+                                   placeholder="XXX-XXX-XXXX"/>
                     </div>
                 </div>
                 
@@ -87,7 +89,6 @@
 @code
 {
     private Clientes Cliente { get; set; } = new Clientes();
-    public string MensajeError { get; set; }
     public string? userId;
     
     protected override async Task OnInitializedAsync()
@@ -112,7 +113,6 @@
         {
             Cliente.FechaIngreso = DateTime.Now;
         }
-        
         await clienteServices.Guardar(Cliente);
         nav.NavigateTo("/");
     }
