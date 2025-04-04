@@ -62,7 +62,8 @@
                         @*Fecha de expiración*@
                         <div class="formulario-grupo col-sm-6 flex-column d-flex">
                             <label class="form-control-label px-3">Fecha de expiración<span class="text-danger"> *</span></label>
-                            <InputDate id="fechaExp" class="formulario-control" @bind-Value="Tarjeta.FechaExp"/>
+                            <InputText id="fechaExp" class="formulario-control" @bind-Value="Tarjeta.FechaExp"
+                                       placeholder="MM/YY"/>
                         </div>
 
                         @*CCV*@
@@ -71,6 +72,11 @@
                             <InputNumber id="ccv" class="formulario-control" @bind-Value="Tarjeta.Ccv"/>
                         </div>
 
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Titular de la tarjeta<span class="text-danger"> *</span></label>
+                            <InputText class="formulario-control" @bind-Value="Tarjeta.TitularTarjeta"/>
+                        </div>
+                        
                         <div class="formulario-grupo col-sm-6 flex-column d-flex">
                             <label class="form-control-label px-3">Apodo<span class="text-danger"> *</span></label>
                             <InputText class="formulario-control" @bind-Value="Tarjeta.ApodoTarjetaCredito"/>
