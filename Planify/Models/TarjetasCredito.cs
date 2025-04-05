@@ -9,7 +9,6 @@ public class TarjetasCredito
     public int TarjetaId { get; set; }
     
     [Required(ErrorMessage = "El número de tarjeta es obligatorio.")]
-    [CreditCard(ErrorMessage = "El número de tarjeta no es válido.")]
     [StringLength(19, MinimumLength = 13, ErrorMessage = "El número de tarjeta debe tener entre 13 y 19 dígitos.")]
     public string NumTarjetaCredito { get; set; }
     
@@ -18,8 +17,13 @@ public class TarjetasCredito
     public int Ccv { get; set; }
     
     [Required(ErrorMessage = "La fecha de expiración es obligatoria.")]
-    [DataType(DataType.Date)]
-    public DateTime FechaExp { get; set; }
+    [RegularExpression(@"^(0[1-9]|1[0-2])\/?([0-9]{2})$", ErrorMessage = "Formato inválido. Use MM/YY.")]
+    public string FechaExp { get; set; }
+    
+    [Required(ErrorMessage = "El nombre del titular es obligatorio.")]
+    [StringLength(100, MinimumLength = 5, ErrorMessage = "El nombre debe tener entre 5 y 100 caracteres.")]
+    [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$", ErrorMessage = "El nombre solo puede contener letras y espacios.")]
+    public string TitularTarjeta { get; set; }
     
     public string Banco { get; set; }
     
