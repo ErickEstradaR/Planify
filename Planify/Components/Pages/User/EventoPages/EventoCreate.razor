@@ -5,7 +5,6 @@
 @inject UserService user
 @rendermode InteractiveServer
 
-@using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize]
@@ -30,9 +29,10 @@
                                     <InputText id="nombre" class="formulario-control" @bind-Value="Evento.NombreEvento" />
                                 </div>
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
-                                    <InputText id="numCedula" class="formulario-control" @bind-Value="Evento.Descripcion" />
+                                    <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
+                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
                                 </div>
+                                
                             </div>
 
                             <div class="row justify-content-between text-left">
@@ -40,10 +40,12 @@
                                     <label class="form-control-label px-3">Donde será?<span class="text-danger"> *</span></label>
                                     <InputText id="correo" class="formulario-control" @bind-Value="Evento.Direccion" />
                                 </div>
+
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
-                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
+                                    <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
+                                    <InputText id="numCedula" class="formulario-control" @bind-Value="Evento.Descripcion" />
                                 </div>
+                                
                             </div>
                             <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                 <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
@@ -87,18 +89,23 @@
     public Eventos Evento { get; set; } = new Eventos();
     public Clientes Cliente = new Clientes();
     public string? userId;
+    
 
     private async Task Guardar()
     {
-        var userId = await user.ObtenerUserId();
+        
         if (!string.IsNullOrEmpty(userId))
         { 
             Cliente = await clienteServices.BuscarPorUserId(userId);
-            Evento.UserId = userId;
         }
-
         Evento.ClienteId = Cliente.ClienteId;
         await eventosServices.Guardar(Evento);
         nav.NavigateTo("/Eventos");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        userId = await user.ObtenerUserId();
+        Evento.UserId = userId;
     }
 }
