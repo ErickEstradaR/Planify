@@ -1,4 +1,4 @@
-@page "/Admin/Cliente/{id:int}"
+@page "/Admin/Cliente/Edit/{id:int}"
 @inject ClientesService clienteServices
 @inject NavigationManager nav 
 @using Microsoft.AspNetCore.Authorization
@@ -45,12 +45,10 @@
                 </div>
                 
                 @*Dirección del Cliente*@
-                <div class="row justify-content-between text-left">
                     <div class="formulario-grupo col-sm-12 flex-column d-flex">
                         <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
                         <InputText id="direccion" class="formulario-control" @bind-Value="Cliente.Direccion"/>
                     </div>
-                </div>
 
                 @*Botón Guardar*@
                 <div class="row justify-content-end">
@@ -80,7 +78,7 @@
     private async Task Guardar()
     {
         await clienteServices.Guardar(Cliente);
-        nav.NavigateTo("/");
+        nav.NavigateTo("/Admin/Clientes");
     }
     
 }
