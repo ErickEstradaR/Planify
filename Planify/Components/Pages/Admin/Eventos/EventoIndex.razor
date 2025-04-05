@@ -74,7 +74,7 @@
                             <td>@evento.Direccion</td>
                             <td>@evento.Categoria</td>
                             <td>@evento.FechaEvento.ToShortDateString()</td>
-                            <td class="text-center">
+                            <td class="text-start">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@evento.EventoId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => MostrarModal(evento.EventoId, evento.NombreEvento)"></button>
                             </td>
