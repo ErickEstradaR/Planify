@@ -93,26 +93,25 @@
 
 @if (mostrarModal)
 {
-<div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #7B0323; color: white;">
-                <h5 class="modal-title">Eliminar Evento</h5>
-                <button type="button" class="btn-close" @onclick="CerrarModal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Está seguro de que desea eliminar este evento?</p>
-                <p>Si este evento tiene un presupuesto el presupuesto asociado será eliminado</p>
-                <p>Esta opción no se puede deshacer.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary bi bi-arrow-left-circle" @onclick="CerrarModal"> Cancelar</button>
-                <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
-            </div>
+<div class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header-custom">
+            <h5 class="modal-title">Eliminar Evento</h5>
+            <button type="button" class="btn-close" @onclick="CerrarModal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>¿Está seguro de que desea eliminar este evento?</p>
+            <p>Si este evento tiene un presupuesto, el presupuesto asociado será eliminado.</p>
+            <p>Esta opción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary bi bi-arrow-left-circle" @onclick="CerrarModal"> Cancelar</button>
+            <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
         </div>
     </div>
 </div>
 }
+
 
 @code
 {
