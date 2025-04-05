@@ -109,7 +109,7 @@
                     </div>
                     <div class="p-2 d-flex">
                       <div class="col-8">ITBIS</div>
-                      <div class="ms-auto">+@Itbis.ToString("N2") </div>
+                      <div class="ms-auto">+@pago.agregadoItbis.ToString("N2") </div>
                     </div>
                     <div class="p-2 d-flex">
                       <div class="col-8">Envío</div>
@@ -120,7 +120,7 @@
                     <div class="border-top px-2 mx-2"></div>
                     <div class="p-2 d-flex pt-3">
                       <div class="col-8"><b>Total</b></div>
-                      <div class="ms-auto"><b class="text-success">$@Total.ToString("N2")</b></div>
+                      <div class="ms-auto"><b class="text-success">$@pago.MontoTotal.ToString("N2")</b></div>
                     </div>
                   </div>
                 </div>
@@ -150,19 +150,17 @@
   {
     presupuesto = await presupuestoService.Buscar(presupuestoId);
     pago.DireccionEnvio = presupuesto.Evento.Direccion;
-    pago.PresupuestoId = presupuestoId;
     detalle = await presupuestoService.ListarDetalle(p => p.PresupuestoId == presupuestoId);
     ListaTarjetas = await tarjetas.Listar(t => t.TarjetaId > 0);
     
     pago.Monto = detalle.Sum(articulo => articulo.Articulo.Precio * articulo.Cantidad);
-    Itbis = pago.Monto * 0.18;
-    Total = pago.Monto + Itbis + 250;
+    pago.agregadoItbis = pago.Monto * 0.18;
+    pago.MontoTotal = pago.Monto + pago.agregadoItbis + 250;
   }
 
   private async Task Guardar()
   {
     pago.userId = userId;
-    pago.Monto = Total;
     pago.FechaCobro = DateTime.Now;
     
     
