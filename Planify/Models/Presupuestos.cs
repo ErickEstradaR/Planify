@@ -12,6 +12,7 @@ public class Presupuestos
     
     public DateTime Fecha { get; set; } = DateTime.Now;
 
+    [Required(ErrorMessage ="Por favor seleccione un evento")]
     public int EventoId { get; set; }
     [ForeignKey("EventoId")] 
     public Eventos Evento { get; set; } = null!;
@@ -21,4 +22,7 @@ public class Presupuestos
     public double MontoTotal { get; set; }
     
     public List<PresupuestosDetalle> PresupuestosDetalles { get; set; } = new List<PresupuestosDetalle>();
+
+    public Pagos? Pago { get; set; }
+
 }
