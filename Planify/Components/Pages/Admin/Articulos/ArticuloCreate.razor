@@ -26,25 +26,24 @@
                                     <label class="form-control-label px-3">Id<span class="text-danger"> *</span></label>
                                     <InputNumber id="id" class="formulario-control" @bind-Value="Articulo.ArticuloId" readonly />
                                 </div>
-                            </div>
-                            
-                            <div class="row justify-content-between text-left">
+
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Nombre Articulo<span class="text-danger"> *</span></label>
                                     <InputText id="nombre" class="formulario-control" @bind-Value="Articulo.Nombre"/>
                                 </div>
+                            </div>
+                            
+                            <div class="row justify-content-between text-left">
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
                                     <InputText id="numCedula" class="formulario-control" @bind-Value="Articulo.Descripcion"/>
                                 </div>
-                            </div>
-
-                            <div class="row justify-content-between text-left">
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Precio<span class="text-danger"> *</span></label>
                                     <InputNumber id="precio" class="formulario-control" @bind-Value="Articulo.Precio"/>
                                 </div>
                             </div>
+                            
                             <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                 <label class="form-control-label px-3">Categoría<span class="text-danger"> *</span></label>
                                 <InputSelect id="categoria" class="formulario-control" @bind-Value="Articulo.Categoria">
@@ -59,7 +58,7 @@
                         </div>
                             <div class="row justify-content-end">
                                 <div class="text-center">
-                                    <a href="/Eventos" class="btn btn-secondary">Volver</a>
+                                    <a href="/Admin/Articulos" class="btn btn-secondary">Volver</a>
                                     <button type="submit" class="btn-enviar">Guardar</button>
                                 </div>
                             </div>
