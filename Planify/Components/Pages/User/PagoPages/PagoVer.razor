@@ -72,7 +72,7 @@
 
           <div class="col-md-5 col-xl-4 offset-xl-1">
             <div class="py-4 d-flex justify-content-end">
-              <h6><a href="/">Volver al Inicio</a></h6>
+              <h6><a href="/Pagos">Volver</a></h6>
             </div>
             <div class="rounded d-flex flex-column p-2 bg-body-tertiary">
               <div class="p-2 me-3">
@@ -84,7 +84,7 @@
               </div>
               <div class="p-2 d-flex">
                 <div class="col-8">ITBIS</div>
-                <div class="ms-auto">+ @Itbis.ToString("N2")</div>
+                <div class="ms-auto">+ @pago.agregadoItbis.ToString("N2")</div>
               </div>
               <div class="p-2 d-flex">
                 <div class="col-8">Envío</div>
@@ -93,7 +93,7 @@
               <div class="border-top px-2 mx-2"></div>
               <div class="p-2 d-flex pt-3">
                 <div class="col-8"><b>Total</b></div>
-                <div class="ms-auto"><b class="text-success">$@Total.ToString("N2")</b></div>
+                <div class="ms-auto"><b class="text-success">$@pago.MontoTotal.ToString("N2")</b></div>
               </div>
               <div class="p-2">
                 <div class="col-12">
