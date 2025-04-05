@@ -54,7 +54,7 @@
                         <th>PagoId</th>
                         <th>Monto Total</th>
                         <th>Fecha</th>
-                        <th>Ver</th>
+                        <th>Ver Pago</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -65,8 +65,8 @@
                             <td>@pago.PagoId</td>
                             <td>@pago.Monto.ToString("N2")</td>
                             <td>@pago.FechaCobro.ToShortDateString()</td>
-                            <td class="text-center">
-                                <a class="btn btn-outline-secondary bi bi-eye text-lg-start" href="/VerPago/@pago.PagoId/"></a>
+                            <td class="text-lg-start">
+                                <a class="btn btn-outline-primary bi bi-eye" href="/VerPago/@pago.userId/@pago.PagoId"></a>
                             </td>
                         </tr>
                     }
