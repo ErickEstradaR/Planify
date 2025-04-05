@@ -1,9 +1,14 @@
-@page "/VerPago/{pagoId:int}"
+@page "/VerPago/{userid}/{pagoId:int}"
 @inject TarjetasService tarjetas
 @inject PresupuestosService presupuestoService
 @inject PagosService pagoServices
 @inject NavigationManager nav
 @rendermode InteractiveServer
+
+
+@using Microsoft.AspNetCore.Authorization
+
+
 
 <section style="background-color: #eee;">
   <div class="container py-5">
@@ -119,6 +124,7 @@
 @code{
   
   [Parameter] public int pagoId { get; set; }
+  [Parameter] public string userid { get; set; }
   
   public Pagos pago { get; set; } = new Pagos();
   public TarjetasCredito tarjeta { get; set; } = new TarjetasCredito();
@@ -129,7 +135,7 @@
   
   protected override async Task OnInitializedAsync()
   {
-    pago = await pagoServices.Buscar(17);
+    pago = await pagoServices.Buscar(pagoId);
     if (pago == null)
     {
       nav.NavigateTo("/pagos");
