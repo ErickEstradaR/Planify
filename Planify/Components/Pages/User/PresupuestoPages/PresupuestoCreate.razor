@@ -17,38 +17,45 @@
             <DataAnnotationsValidator/>
             <ValidationSummary/>
 
+            <div>
+                @if (!string.IsNullOrEmpty(MensajeError))
+                {
+                <div class="alert alert-danger">@MensajeError</div>
+                }
+            </div>
             <PageTitle>Qué necesitas para tu evento?</PageTitle>
             <div class="container-formulario px-1 py-5 mx-auto">
                 <div class="row d-flex justify-content-center">
                     <div class="card-formulario">
-                            <h5 class="text-center mb-4 texto-azul">Crea tu presupuesto</h5>
+                        <h5 class="text-center mb-4 texto-azul">Crea tu presupuesto</h5>
 
-                            <div class="row justify-content-between text-left">
+                        <div class="row justify-content-between text-left">
+                            <div class="formulario-grupo col-sm-6 flex-column d-flex">
+
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
-
-                                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                        <label class="form-control-label px-3">PresupuestoId<span class="text-danger"> *</span></label>
-                                        <InputNumber class="formulario-control" @bind-Value="Presupuesto.PresupuestoId" readonly />
-                                    </div>
+                                    <label class="form-control-label px-3">PresupuestoId<span class="text-danger"> *</span></label>
+                                    <InputNumber class="formulario-control" @bind-Value="Presupuesto.PresupuestoId" readonly />
+                                </div>
                                     
-                                    <label class="form-control-label px-3">Evento<span class="text-danger"> *</span></label>
-                                    <InputSelect class="formulario-control" @bind-Value="Presupuesto.EventoId">
-                                        <option value="0" selected disabled> Seleccione un evento </option>
-                                        @foreach (var evento in ListaEventos)
-                                        {
-                                            <option value="@evento.EventoId"> @evento.NombreEvento
-                                            </option>
-                                        }
-                                    </InputSelect>
+                                <label class="form-control-label px-3">Evento<span class="text-danger"> *</span></label>
+                                <InputSelect class="formulario-control" @bind-Value="Presupuesto.EventoId">
+                                    <option value="0" selected disabled> Seleccione un evento </option>
+                                    @foreach (var evento in ListaEventos)
+                                    {
+                                        <option value="@evento.EventoId"> @evento.NombreEvento
+                                        </option>
+                                    }
+                                </InputSelect>
 
-                                </div>
-                                <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Fecha<span class="text-danger"> *</span></label>
-                                    <InputDate class="formulario-control" @bind-Value="Presupuesto.Fecha" readonly />
-                                </div>
-                                
                             </div>
+                            <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                                <label class="form-control-label px-3">Fecha<span class="text-danger"> *</span></label>
+                                <InputDate class="formulario-control" @bind-Value="Presupuesto.Fecha" readonly />
+                            </div>
+                                
                         </div>
+                    </div>
+                    <div class="card-formulario">
                         <div class="border border-success p-3 mt-3">
                             <h5>Detalle</h5>
                             @*Picker*@
@@ -73,40 +80,35 @@
                                 @*Detalles *@
                                 @foreach (var detalle in Presupuesto.PresupuestosDetalles)
                                 {
-                                if (detalle?.Articulo != null)
-                                {
-                                <tr class="text-center">
-                                    <td class="text-lg-start">@detalle.Articulo.Nombre</td>
-                                    <td>@detalle.Articulo.Precio</td>
-                                    <td>@detalle.Cantidad</td>
-                                    <td>
-                                        <button type="button" @onclick="() => EliminarDetalle(detalle)" class="btn btn-outline-danger bi bi-trash mt-2"> Remover</button>
-                                    </td>
-                                </tr>
-                                }
-                                else
-                                {
-                                <tr>
-                                    <td colspan="3">Detalle con artículo no válido</td>
-                                </tr>
-                                }
+                                    {
+                                        <tr class="text-center">
+                                            <td class="text-lg-start">@detalle.Articulo.Nombre</td>
+                                            <td>@detalle.Articulo.Precio</td>
+                                            <td>@detalle.Cantidad</td>
+                                            <td>
+                                                <button type="button" @onclick="() => EliminarDetalle(detalle)" class="btn btn-outline-danger bi bi-trash mt-2"> Remover</button>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                                 </tbody>
                             </table>
                             <hr/>
                         </div>
-                        
                         @*Footer*@
                         <div class="card-footer d-flex justify-content-between">
-                            <label class="ms-3"><strong>Cantidad:</strong> @Presupuesto.PresupuestosDetalles.Count</label>
+                            <label class="ms-3"><strong>Articulos:</strong> @Presupuesto.PresupuestosDetalles.Count</label>
                             <div class="col-5 text-end">
                                 <label class="ms-5"><strong>Total:</strong> @Presupuesto.MontoTotal.ToString("N2")</label>
                             </div>
                         </div>
+                    </div>
+                    
+                        
                         
                         @*Botones*@ 
-                        <div class="row justify-content-end">
-                            <div class="formulario-grupo col-sm-6">
+                        <div class="card-footer text-center mt-2">
+                            <div class="formulario-grupo">
                                 <a href="/Presupuestos" class="btn btn-secondary">Volver</a>
                                 <button type="submit" class="btn-enviar btn-block">Guardar</button>
                             </div>
@@ -128,11 +130,18 @@
     public PresupuestosDetalle DetalleSeleccionado { get; set; } = new();
     public List<Articulos> ListaArticulos = new List<Articulos>();
     public string? userId;
+    public string MensajeError { get; set; } = string.Empty;
     
     private async Task Guardar()
     {
         try
         { 
+            if (Presupuesto.EventoId <= 0)
+            {
+               MensajeError="Debe seleccionar un evento"; 
+               return;
+            }
+            
             userId = await user.ObtenerUserId();
             Presupuesto.UserId = userId;
          
@@ -153,8 +162,6 @@
             Console.WriteLine($"Error al guardar el presupuesto: {e.Message}");
         }
     }
-
-
     
     protected override async Task OnInitializedAsync()
     {
@@ -184,7 +191,16 @@
     
     private void EliminarDetalle(PresupuestosDetalle detalle)
     {
+        if (detalle.Articulo != null)
+        {
+            Presupuesto.MontoTotal -= detalle.Articulo.Precio * detalle.Cantidad;
+        }
         Presupuesto.PresupuestosDetalles.Remove(detalle);
+        DetalleSeleccionado = new PresupuestosDetalle
+        {
+            ArticuloId = detalle.ArticuloId,
+            Cantidad = detalle.Cantidad
+        };
     }
     
 }
