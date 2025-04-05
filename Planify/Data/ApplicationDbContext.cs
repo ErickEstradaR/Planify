@@ -14,6 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<PresupuestosDetalle> PresupuestosDetalles { get; set; }
     public DbSet<TarjetasCredito> TarjetasCredito { get; set; }
     public DbSet<Pagos> Pagos { get; set; }
+    public DbSet<PagosDetalle> PagosDetalles { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
