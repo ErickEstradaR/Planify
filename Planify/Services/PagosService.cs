@@ -50,4 +50,14 @@ public class PagosService (IDbContextFactory<ApplicationDbContext> dbfactory)
         await using var contexto = await dbfactory.CreateDbContextAsync();
         return await contexto.Pagos.FirstOrDefaultAsync(p => p.PagoId == PagoId);
     }
+    
+    public async Task<List<PagosDetalle>> ListarDetalle(Expression<Func<PagosDetalle, bool>> criterio)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        return await contexto.PagosDetalles
+            .Where(criterio)
+            .ToListAsync();
+    }
+
+    
 }
