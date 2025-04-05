@@ -21,8 +21,7 @@
             <div class="container-formulario px-1 py-5 mx-auto">
                 <div class="row d-flex justify-content-center">
                     <div class="card-formulario">
-                        <div class="card-formulario">
-                            <h5 class="text-center mb-4">Crea tu presupuesto</h5>
+                            <h5 class="text-center mb-4 texto-azul">Crea tu presupuesto</h5>
 
                             <div class="row justify-content-between text-left">
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
@@ -114,7 +113,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
         </ChildContent>
     </EditForm>
     </Authorized>
@@ -161,7 +159,7 @@
     protected override async Task OnInitializedAsync()
     {
         userId = await user.ObtenerUserId();
-        ListaEventos = await eventosServices.Listar(e=>e.UserId == userId);
+        ListaEventos = await eventosServices.ListarEventosSinPresupuesto(userId);
         ListaArticulos = await articulosService.Listar(a => a.ArticuloId > -4);
         Presupuesto.Fecha = DateTime.Now;
     }
