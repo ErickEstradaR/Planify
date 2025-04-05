@@ -94,4 +94,16 @@ public class EventosService (IDbContextFactory<ApplicationDbContext> dbfactory)
         await using var contexto = await dbfactory.CreateDbContextAsync();
         return await contexto.Eventos.FirstOrDefaultAsync(e=>e.EventoId == EventoId);
     }
+    
+    public async Task<List<Eventos>> ListarEventosSinPresupuesto(string userId)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        var eventosConPresupuesto = contexto.Presupuestos
+            .Select(p => p.EventoId);
+
+        return await contexto.Eventos
+            .Where(e => e.UserId == userId && !eventosConPresupuesto.Contains(e.EventoId))
+            .ToListAsync();
+    }
+
 }
