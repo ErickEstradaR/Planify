@@ -13,34 +13,21 @@ namespace Planify.Services
         public UserService(AuthenticationStateProvider authenticationStateProvider, UserManager<ApplicationUser> userManager)
         {
             _authenticationStateProvider = authenticationStateProvider;
-            _userManager = userManager;  // Inyectamos el UserManager
+            _userManager = userManager; 
         }
 
         // Método para obtener el UserId del usuario autenticado
-        public async Task<string?> ObtenerUserId()
+        public async Task<string> ObtenerUserId()
         {
-            try
-            {
-                var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-                var user = authState.User;
+            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
 
-                if (user.Identity is { IsAuthenticated: true })
-                {
-                    return user.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                           ?? user.FindFirst("sub")?.Value;
-                }
-            }
-            catch (Exception ex)
+            if (user.Identity.IsAuthenticated)
             {
-                Console.WriteLine($"Error obteniendo UserId: {ex.Message}");
+                return user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             }
-            return null;
-        }
-        
-        public async Task<List<string>> ObtenerRol(ApplicationUser user)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.ToList(); 
+
+            return null!;
         }
         
         public async Task<ApplicationUser?> EncontrarUsuario(string userId)
