@@ -2,7 +2,7 @@
 <div class="col-auto input-group align-items-center">
 
     <InputSelect class="form-control form-select" @bind-Value="ArticuloId">
-        <option value="0" selected disabled> Seleccione </option>
+        <option value="0" selected disabled> Seleccione un Articulo: </option>
         @foreach (var articulo in ArticulosList)
         {
             <option value="@articulo.ArticuloId"> @articulo.Nombre -- @articulo.Precio.ToString("N2")
