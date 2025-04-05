@@ -22,7 +22,7 @@
                 <div class="row d-flex justify-content-center">
                     <div class="card-formulario">
                         <div class="card-formulario">
-                            <h5 class="text-center mb-4">Modifica tu presupuesto</h5>
+                            <h5 class="text-center mb-4 texto-azul">Modifica tu presupuesto</h5>
 
                             <div class="row justify-content-between text-left">
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
@@ -41,6 +41,7 @@
                                             </option>
                                         }
                                     </InputSelect>
+                                    <ValidationMessage For="@(() => Presupuesto.EventoId)" class="text-danger" />
 
                                 </div>
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
@@ -64,6 +65,7 @@
                                 <thead class="table table-striped">
                                 <tr class="text-center">
                                     <th class="text-lg-start">Articulo</th>
+                                    <th>Precio</th>
                                     <th>Cantidad</th>
                                     <th>Remover</th>
                                 </tr>
@@ -75,6 +77,7 @@
                                 {
                                     <tr class="text-center">
                                         <td class="text-lg-start">@detalle.Articulo.Nombre</td>
+                                        <td>@detalle.Articulo.Precio</td>
                                         <td>@detalle.Cantidad</td>
                                         <td>
                                             <button type="button" @onclick="() => EliminarDetalle(detalle)" class="btn btn-outline-danger bi bi-trash mt-2"> Remover</button>
@@ -88,7 +91,7 @@
                         
                         @*Footer*@
                         <div class="card-footer d-flex justify-content-between">
-                            <label class="ms-3"><strong>Cantidad:</strong> @Presupuesto.PresupuestosDetalles.Count</label>
+                            <label class="ms-3"><strong>Articulos:</strong> @Presupuesto.PresupuestosDetalles.Count</label>
                             <div class="col-5 text-end">
                                 <label class="ms-5"><strong>Total:</strong> @Presupuesto.MontoTotal.ToString("N2")</label>
                             </div>
@@ -122,6 +125,12 @@
     {
         try
         { 
+            // Validar si se ha seleccionado un evento
+            if (Presupuesto.EventoId <= 0)
+            {
+                return; // La validación de DataAnnotations se encargará de mostrar el error
+            }
+            
             userId = await user.ObtenerUserId();
             Presupuesto.UserId = userId;
             await presupuestoService.Guardar(Presupuesto);
@@ -155,14 +164,25 @@
                 Articulo = articuloseleccionado
             };
             Presupuesto.PresupuestosDetalles.Add(nuevoDetalle);
-            Presupuesto.MontoTotal = selection.articulo.Precio * selection.cantidad;
+            // Fix: Use += instead of = to add to the total instead of replacing it
+            Presupuesto.MontoTotal += selection.articulo.Precio * selection.cantidad;
             DetalleSeleccionado = new PresupuestosDetalle();
         }
     }
     
     private void EliminarDetalle(PresupuestosDetalle detalle)
     {
+        // Subtract the amount from the total
+        if (detalle.Articulo != null)
+        {
+            Presupuesto.MontoTotal -= detalle.Articulo.Precio * detalle.Cantidad;
+        }
+        
         Presupuesto.PresupuestosDetalles.Remove(detalle);
+        DetalleSeleccionado = new PresupuestosDetalle
+        {
+            ArticuloId = detalle.ArticuloId,
+            Cantidad = detalle.Cantidad
+        };
     }
-    
 }
