@@ -1,8 +1,12 @@
 @page "/VerPago/{userid}/{pagoId:int}"
+@using Microsoft.AspNetCore.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject TarjetasService tarjetas
 @inject PagosService pagoServices
 @inject NavigationManager nav
 @rendermode InteractiveServer
+
+@attribute [Authorize]
 
 <section style="background-color: #eee;">
   <div class="container py-5">
@@ -72,7 +76,7 @@
 
           <div class="col-md-5 col-xl-4 offset-xl-1">
             <div class="py-4 d-flex justify-content-end">
-              <h6><a href="/Pagos">Volver</a></h6>
+              <a href="@((EsAdmin ? "/Admin/Pagos" : "/Pagos"))">Volver</a>
             </div>
             <div class="rounded d-flex flex-column p-2 bg-body-tertiary">
               <div class="p-2 me-3">
@@ -115,6 +119,9 @@
   public Pagos pago { get; set; } = new Pagos();
   public TarjetasCredito tarjeta { get; set; } = new TarjetasCredito();
   public List<PagosDetalle> detalle { get; set; } = new();
+  private bool EsAdmin = false;
+
+  
 
 
   private double Itbis;
@@ -122,6 +129,12 @@
 
   protected override async Task OnInitializedAsync()
   {
+    var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    var user = authState.User;
+
+    EsAdmin = user.IsInRole("Admin");
+    
+    
     pago = await pagoServices.Buscar(pagoId);
     detalle = await pagoServices.ListarDetalle(d => d.PagoId == pagoId);
     if (pago == null)
