@@ -36,4 +36,6 @@ public class Eventos
     
     [ForeignKey("ClienteId")]
     public Clientes? Cliente { get; set; }
+    
+    public Presupuestos? Presupuesto { get; set; }
 }
