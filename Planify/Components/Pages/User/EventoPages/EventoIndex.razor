@@ -11,87 +11,110 @@
 <AuthorizeView>
     <Authorized>
 <PageTitle>Eventos</PageTitle>
-    <div class="container">
-        <div class="card shadow-lg">
-            <div class="card header">
-            </div>
-            <div class="card-body">
-                <h5 class="text-center">Mis Eventos</h5>
-                <div class="row">
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card header">
+        </div>
+        <div class="card-body">
+            <h5 class="text-center">Mis Eventos</h5>
+            <div class="row">
+                <div class="col-3">
+                    @*Filtro de búsqueda*@
+                    <InputSelect class="form-select" @bind-Value="@Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="EventoId">Id de Evento</option>
+                        <option value="NombreEvento">Nombre de tu Evento</option>
+                        <option value="Categoria">Categor&iacute;a</option>
+                    </InputSelect>
+                </div>
+                    
+                @*Botones*@
+                <div class="col-4">
+                    <div class="input-group">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+                        </div>
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                        <a href="/Evento/Create" class="btn btn-success">
+                            <span class="bi bi-plus-square"></span> Crear
+                        </a>
+                    </div>
+                </div>
+                    
+                <div class="row mb-3">
                     <div class="col-3">
-                        @*Filtro de búsqueda*@
-                        <InputSelect class="form-select" @bind-Value="@Filtro">
-                            <option value="" selected disabled>Elija una opci&oacute;n</option>
-                            <option value="EventoId">Id de Evento</option>
-                            <option value="NombreEvento">Nombre de tu Evento</option>
-                            <option value="Categoria">Categor&iacute;a</option>
-                        </InputSelect>
+                        <label class="col-form-label"><strong>Desde</strong></label>
+                        <InputDate class="form-control" @bind-Value="FechaDesde" />
                     </div>
-                    
-                    @*Botones*@
-                    <div class="col-4">
-                        <div class="input-group">
-                            <div class="col-auto">
-                                <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
-                            </div>
-                            <input class="form-control" @bind="ValorFiltro" placeholder="Buscar"/>
-                            <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
-                            <a href="/Evento/Create" class="btn btn-success">
-                                <span class="bi bi-plus-square"></span> Crear
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-3">
-                            <label class="col-form-label"><strong>Desde</strong></label>
-                            <InputDate class="form-control" @bind-Value="FechaDesde" />
-                        </div>
-                        <div class="col-3">
-                            <label class="col-form-label"><strong>Hasta</strong></label>
-                            <InputDate class="form-control" @bind-Value="FechaHasta" />
-                        </div>
+                    <div class="col-3">
+                        <label class="col-form-label"><strong>Hasta</strong></label>
+                        <InputDate class="form-control" @bind-Value="FechaHasta" />
                     </div>
                 </div>
-                
-                @*Tabla de Eventos*@
-                <table class="table table-hover">
-                    <thead class="table table-striped text-black">
-                    <tr>
-                        <th>EventoId</th>
-                        <th>Nombre</th>
-                        <th>Direcci&oacute;n</th>
-                        <th>Categor&iacute;a</th>
-                        <th>Fecha del Evento</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @*Eventos*@
-                    @foreach (var evento in ListaEventos)
-                    {
-                        <tr>
-                            <td>@evento.EventoId</td>
-                            <td>@evento.NombreEvento</td>
-                            <td>@evento.Direccion</td>
-                            <td>@evento.Categoria</td>
-                            <td>@evento.FechaEvento.ToShortDateString()</td>
-                            <td class="text-center">
-                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@evento.EventoId"></a>
-                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(evento.EventoId)"></button>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
             </div>
-            <div class="card-footer d-flex justify-content-between">
-                <label class="ms-3"><strong>Cantidad:</strong> @ListaEventos.Count</label>
-                </div>
+                
+            @*Tabla de Eventos*@
+            <table class="table table-hover">
+                <thead class="table table-striped text-black">
+                <tr>
+                    <th>EventoId</th>
+                    <th>Nombre</th>
+                    <th>Direcci&oacute;n</th>
+                    <th>Categor&iacute;a</th>
+                    <th>Fecha del Evento</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                @*Eventos*@
+                @foreach (var evento in ListaEventos)
+                {
+                    <tr>
+                        <td>@evento.EventoId</td>
+                        <td>@evento.NombreEvento</td>
+                        <td>@evento.Direccion</td>
+                        <td>@evento.Categoria</td>
+                        <td>@evento.FechaEvento.ToShortDateString()</td>
+                        <td class="text-lg-start">
+                            <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@evento.EventoId"></a>
+                            <button class="btn btn-outline-danger bi bi-trash" @onclick="() => MostrarModal(evento.EventoId, evento.NombreEvento)"></button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <label class="ms-3"><strong>Cantidad:</strong> @ListaEventos.Count</label>
         </div>
     </div>
+</div>
     </Authorized>
 </AuthorizeView>
+
+@if (mostrarModal)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #7B0323; color: white;">
+                    <h5 class="modal-title">Eliminar Evento</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de que desea eliminar este evento?</p>
+                    <p>Si este evento tiene un presupuesto el presupuesto asociado será eliminado</p>
+                    <p>Esta opción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary bi bi-arrow-left-circle" @onclick="CerrarModal"> Cancelar</button>
+                    <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code
 {
@@ -102,23 +125,28 @@
     public DateTime? FechaDesde { get; set; } = DateTime.Now;
     public DateTime? FechaHasta { get; set; } = DateTime.Now.AddDays(7);
 
+    private bool mostrarModal = false;
+    private int EventoIdSeleccionado { get; set; }
+    private string NombreEventoSelecionado { get; set; } = "";
+
     protected override async Task OnInitializedAsync()
     {
         if (string.IsNullOrEmpty(userId))
         {
-            userId = await user.ObtenerUserId(); 
+            userId = await user.ObtenerUserId();
         }
+
         ListaEventos = await eventoService.Listar(e => e.UserId == userId);
     }
-    
+
     @*Buscar según el filtro*@
     private async Task Buscar()
     {
         if (string.IsNullOrEmpty(userId))
         {
-            userId = await user.ObtenerUserId(); 
+            userId = await user.ObtenerUserId();
         }
-        
+
         if (Filtro == "EventoId")
         {
             if (int.TryParse(ValorFiltro, out int EventoId))
@@ -127,7 +155,7 @@
                     e.EventoId == EventoId &&
                     e.UserId == userId &&
                     e.FechaEvento >= FechaDesde &&
-                    e.FechaEvento <= FechaHasta ); 
+                    e.FechaEvento <= FechaHasta);
             }
         }
         else if (Filtro == "NombreEvento")
@@ -135,7 +163,7 @@
             ListaEventos = await eventoService.Listar(e =>
                 e.NombreEvento.ToLower().Contains(ValorFiltro.ToLower()) &&
                 e.FechaEvento >= FechaDesde &&
-                e.FechaEvento <= FechaHasta && e.UserId == userId); 
+                e.FechaEvento <= FechaHasta && e.UserId == userId);
         }
         else if (Filtro == "Categoria")
         {
@@ -143,7 +171,7 @@
                 e.Categoria.ToLower().Contains(ValorFiltro.ToLower()) &&
                 e.FechaEvento >= FechaDesde &&
                 e.FechaEvento <= FechaHasta &&
-                e.UserId == userId); 
+                e.UserId == userId);
         }
     }
 
@@ -154,11 +182,28 @@
         ValorFiltro = string.Empty;
         ListaEventos = await eventoService.Listar(e => e.UserId == userId);
     }
-    
+
     @*Metodo Eliminar*@
-    private async Task Eliminar(int Id)
+    private async Task Eliminar()
     {
-        await eventoService.Eliminar(Id);
+        await eventoService.Eliminar(EventoIdSeleccionado);
         ListaEventos = await eventoService.Listar(e => e.UserId == userId);
+        mostrarModal = false;
+        EventoIdSeleccionado = 0;
+    }
+
+    private void MostrarModal(int eventoid, string eventoSeleccionado)
+    {
+        EventoIdSeleccionado = eventoid;
+        NombreEventoSelecionado = eventoSeleccionado;
+        mostrarModal = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+        EventoIdSeleccionado = 0;
+        NombreEventoSelecionado = "";
     }
 }
+    
