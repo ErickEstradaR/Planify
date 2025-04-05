@@ -164,7 +164,24 @@
     pago.userId = userId;
     pago.Monto = Total;
     pago.FechaCobro = DateTime.Now;
+    
+    
+    foreach (var articulo in detalle)
+    {
+      var detallePago = new PagosDetalle
+      {
+        NombreArticulo = articulo.Articulo?.Nombre ?? "Desconocido",
+        Descripcion = articulo.Articulo?.Descripcion ?? "",
+        Categoria = articulo.Articulo?.Categoria ?? "",
+        Cantidad = articulo.Cantidad,
+        PrecioUnitario = articulo.Articulo?.Precio ?? 0
+      };
+      pago.Detalles.Add(detallePago);
+    }
+    
+    // Guardar el pago con los detalles
     await pagoServices.Guardar(pago);
     nav.NavigateTo("/payment-success");
   }
+
 }
