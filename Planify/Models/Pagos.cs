@@ -21,4 +21,7 @@ public class Pagos
     public int TarjetaId { get; set; }
     [ForeignKey("TarjetaId")]
     public TarjetasCredito Tarjeta { get; set; }
+    
+    public List<PagosDetalle> Detalles { get; set; } = new List<PagosDetalle>();  
+
 }
