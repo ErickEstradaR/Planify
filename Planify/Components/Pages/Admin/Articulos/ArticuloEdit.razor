@@ -6,7 +6,7 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 
-@attribute [Authorize]
+@attribute [Authorize (Roles = "Admin")]
 <AuthorizeView>
     <Authorized>
     <EditForm Model="Articulo" OnValidSubmit="Guardar" FormName="Articulo">
