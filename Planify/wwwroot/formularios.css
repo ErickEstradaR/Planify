@@ -10,7 +10,7 @@
 
 .container-formulario {
     margin: auto;
-    width: 600px;
+    width: 900px;
     box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     padding: 3rem 3.5rem 4px;
 }
@@ -19,6 +19,7 @@
     background: #ffffff;
     border-radius: 10px;
     padding: 20px;
+    padding-bottom: 20px;
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -155,4 +156,24 @@ tabla-sin-lineas {
 
 .tabla-sin-lineas td:nth-child(3) {
     text-align: right;
+}
+
+.card-f {
+    max-width: 600px;
+}
+
+.card-f .form-r {
+    display: flex;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.card-f .input-g {
+    flex: 1;
+    min-width: 0;
+}
+
+.card-f .formulario-c {
+    width: 100%;
+    display: block;
 }
