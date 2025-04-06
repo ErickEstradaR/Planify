@@ -1,0 +1,82 @@
+@foreach (var tarjeta in ListaTarjetas)
+{
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading@tarjeta.TarjetaId">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"data-bs-target=@($"#collapse{tarjeta.TarjetaId}")
+                    aria-controls=@($"collapse{tarjeta.TarjetaId}")
+                    id=@($"heading{tarjeta.TarjetaId}")>
+                <div class="tarjeta-container">
+                    <div class="tarjeta-info">
+                        <img src="@GetCardImageUrl(tarjeta.Banco)" alt="Logo" class="tarjeta-logo" />
+                        <span class="tarjeta-numero">@tarjeta.ApodoTarjetaCredito</span>
+                    </div>
+                </div>
+            </button>
+        </h2>
+        <div id=@($"collapse{tarjeta.TarjetaId}") class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <EditForm Model="tarjeta" OnValidSubmit="() => OnTarjetaEditada.InvokeAsync(tarjeta)">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="card-f">
+                        <!-- First row: Card number by itself -->
+                        <div class="form-r">
+                            <div class="input-g">
+                                <label class="form-control-label px-3">Número de tu tarjeta<span class="text-danger"> *</span></label>
+                                <InputText class="formulario-c" @bind-Value="tarjeta.NumTarjetaCredito" />
+                            </div>
+                        </div>
+
+                        <!-- Second row: Expiration date and CCV side by side -->
+                        <div class="form-r">
+                            <div class="input-g">
+                                <label class="form-control-label px-3">Fecha de expiración<span class="text-danger"> *</span></label>
+                                <InputText class="formulario-c" @bind-Value="tarjeta.FechaExp" placeholder="MM/YY" />
+                            </div>
+
+                            <div class="input-g">
+                                <label class="form-control-label px-3">Ccv<span class="text-danger"> *</span></label>
+                                <InputNumber class="formulario-c" @bind-Value="tarjeta.Ccv" />
+                            </div>
+                        </div>
+
+                        <!-- Third row: Cardholder name and Card nickname side by side -->
+                        <div class="form-r">
+                            <div class="input-g">
+                                <label class="form-control-label px-3">Titular de la tarjeta<span class="text-danger"> *</span></label>
+                                <InputText class="formulario-c" @bind-Value="tarjeta.TitularTarjeta" />
+                            </div>
+
+                            <div class="input-g">
+                                <label class="form-control-label px-3">Apodo<span class="text-danger"> *</span></label>
+                                <InputText class="formulario-c" @bind-Value="tarjeta.ApodoTarjetaCredito" />
+                            </div>
+                        </div>
+
+                        <!-- Submit and Delete buttons -->
+                        <div class="form-r">
+                            <button type="submit" class="btn btn-primary bi bi-floppy">Editar</button>
+                            <button type="button" class="btn btn-danger bi bi-trash" @onclick="() => OnTarjetaEliminada.InvokeAsync(tarjeta.TarjetaId)">Eliminar</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public List<TarjetasCredito> ListaTarjetas { get; set; }
+    [Parameter] public EventCallback<TarjetasCredito> OnTarjetaEditada { get; set; }
+    [Parameter] public EventCallback<int> OnTarjetaEliminada { get; set; }
+
+    private string GetCardImageUrl(string banco)
+    {
+        return banco switch
+        {
+            "Mastercard" => "https://res.cloudinary.com/drjm09rqf/image/upload/v1743556867/Mastercard-Logo-PNG-HD-1_asmjkb.webp",
+            "Visa" => "https://res.cloudinary.com/drjm09rqf/image/upload/v1743557099/download-visa-card-logo-icon-png-735811696866915avdywnhoab_o46s2o.png",
+            "Desconocido" => "https://res.cloudinary.com/drjm09rqf/image/upload/v1743557212/524369-200_uvpsk6.png"
+        };
+    }
+}
