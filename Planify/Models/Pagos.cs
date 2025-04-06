@@ -17,9 +17,11 @@ public class Pagos
     public string DireccionEnvio { get; set; }
     public string userId { get; set; }
     
-    public int TarjetaId { get; set; }
-    [ForeignKey("TarjetaId")]
-    public TarjetasCredito Tarjeta { get; set; }
+    public string Ultimos4Digitos { get; set; }
+    public string Banco { get; set; }
+    public string ApodoTarjeta { get; set; }
+    public string TitularTarjeta { get; set; }
+    
     
     public List<PagosDetalle> Detalles { get; set; } = new List<PagosDetalle>();  
 
