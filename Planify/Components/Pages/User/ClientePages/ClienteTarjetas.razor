@@ -125,6 +125,6 @@
         tarjeta.Banco = await TarjetaService.ObtenerTipoTarjeta(tarjeta.NumTarjetaCredito);
         await TarjetaService.Guardar(tarjeta); 
         ListaTarjetas = await TarjetaService.Listar(t => t.ClienteId == Cliente.ClienteId);
-        MensajeExito = "Tu tarjeta fue editada correctamente!";
+        MensajeExito = $"La tarjeta {tarjeta.ApodoTarjetaCredito} fue editada correctamente!";
         }
 }
