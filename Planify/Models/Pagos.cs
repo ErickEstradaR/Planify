@@ -14,6 +14,7 @@ public class Pagos
     
     public double MontoTotal { get; set; }
     public DateTime FechaCobro { get; set; } 
+    [Required(ErrorMessage = "La dirección no puede estar vacía")]
     public string DireccionEnvio { get; set; }
     public string userId { get; set; }
     
