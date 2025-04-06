@@ -39,14 +39,14 @@
 }
 
 .hero {
-    background: rgb(240,149,6);
-    background: radial-gradient(circle, rgba(240,149,6,1) 2%, rgba(187,135,83,1) 38%, rgba(249,124,3,1) 58%);
+    background: rgb(255,255,255);
+    background: linear-gradient(112deg, rgba(255,255,255,1) 13%, rgba(255,140,0,1) 49%, rgba(255,140,0,1) 64%, rgba(254,254,254,1) 66%);
     background-size: cover;
     background-position: center center;
-    color: white;
-    padding: 200px 20px;
+    color: black;
+    padding: 100px 10px;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .btn-primary {
@@ -267,7 +267,7 @@
 }
 
 .text-naranja{
-    color: darkorange;
+    color: #ff8c00;
 }
 
 .bg-orange {
