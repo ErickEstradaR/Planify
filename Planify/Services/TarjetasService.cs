@@ -7,17 +7,22 @@ namespace Planify.Services;
 
 public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
 {
-     /// <summary>
+    /// <summary>
     /// Este método inserta  una tarjeta en la base de datos
     /// </summary>
     /// <param name="tarjeta"></param>
     /// <returns>retorna un bool si la operacion es exitosa y false si falla</returns>
     public async Task<bool> Guardar(TarjetasCredito tarjeta)
     {
+        if (!await Existe(tarjeta.TarjetaId))
+        {
             return await Insertar(tarjeta);
+        }
+
+        return await Modificar(tarjeta);
     }
-     
-    
+
+
     /// <summary>
     /// Permite insertar una nueva Tarjeta en la base de datos
     /// </summary>
@@ -27,6 +32,19 @@ public class TarjetasService (IDbContextFactory<ApplicationDbContext> dbfactory)
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
         contexto.TarjetasCredito.Add(tarjeta);
+        return await contexto.SaveChangesAsync() > 0;
+    }
+    
+    public async Task<bool> Existe(int tarjetaid)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        return await contexto.TarjetasCredito.AnyAsync(p => p.TarjetaId == tarjetaid);
+    }
+    
+    private async Task<bool> Modificar(TarjetasCredito tarjeta)
+    {
+        await using var contexto = await dbfactory.CreateDbContextAsync();
+        contexto.TarjetasCredito.Update(tarjeta);
         return await contexto.SaveChangesAsync() > 0;
     }
 
