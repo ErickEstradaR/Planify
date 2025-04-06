@@ -16,64 +16,70 @@
 
             <PageTitle>Registro de clientes</PageTitle>
             <div class="container-formulario  mt-50 mb-50">
-            <div class="row d-flex justify-content-center">
+                <div class="row d-flex justify-content-center">
                 
-                @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
-                @if (Cliente == null)
-                {
-                    <h3>Empecemos</h3>
-                    <p class="texto-azul">Solo responde algunas preguntas<br>
-                        así te conoceremos un poco más </p>
-                }
-                @if (Cliente != null)
-                {
-                    <h1 class="text-center">Bienvenido!</h1>
-                    <h2 class="texto-azul text-center">@Cliente.Nombre</h2>
-                }
+                    @*-Este texto dependiendo de si es la primera vez que el cliente registra su informacion-*@
+                    @if (Cliente == null)
+                    {
+                        <h3>Empecemos</h3>
+                        <p class="texto-azul">Solo responde algunas preguntas<br>
+                            así te conoceremos un poco más </p>
+                    }
+                    @if (Cliente != null)
+                    {
+                        <h1 class="text-center">Bienvenido!</h1>
+                        <h2 class="texto-azul text-center">@Cliente.Nombre</h2>
+                    }
 
-                <div class="naav">
-                    <ul class="mx-auto">
-                        <li class="activee"><a href="Cliente">Sobre ti</a></li>
-                        <li><a href="/Tarjetas">Métodos de pago</a></li>
-                    </ul>
-                </div>
-                <hr/>
+                    <div class="naav">
+                        <ul class="mx-auto">
+                            <li class="activee"><a href="Cliente">Sobre ti</a></li>
+                            <li><a href="/Tarjetas">Métodos de pago</a></li>
+                        </ul>
+                    </div>
+                    <hr/>
+
+                    <div>
+                        @if (!string.IsNullOrEmpty(MensajeExito))
+                        {
+                        <div class="alert alert-success">@MensajeExito</div>
+                        }
+                    </div>
                 
-                @*Nombre del Cliente*@
-                <div class="row justify-content-between text-left">
-                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                        <label class="form-control-label px-3">Tu Nombre<span class="text-danger"> *</span></label>
-                        <InputText id="nombre" class="formulario-control" @bind-Value="Cliente.Nombre"/>
-                    </div>
+                    @*Nombre del Cliente*@
+                    <div class="row justify-content-between text-left">
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Tu Nombre<span class="text-danger"> *</span></label>
+                            <InputText id="nombre" class="formulario-control" @bind-Value="Cliente.Nombre"/>
+                        </div>
 
-                    @*Número de cedula del cliente*@
-                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                        <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
-                        <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"
-                                   placeholder="XXX-XXXXXXX-X"/>
-                    </div>
+                        @*Número de cedula del cliente*@
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Número de Cédula<span class="text-danger"> *</span></label>
+                            <InputText id="numCedula" class="formulario-control" @bind-Value="Cliente.NumCedula"
+                                       placeholder="XXX-XXXXXXX-X"/>
+                        </div>
 
-                    @*Número de telefono del cliente*@
-                    <div class="formulario-grupo col-sm-6 flex-column d-flex">
-                        <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
-                        <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"
-                                   placeholder="XXX-XXX-XXXX"/>
+                        @*Número de telefono del cliente*@
+                        <div class="formulario-grupo col-sm-6 flex-column d-flex">
+                            <label class="form-control-label px-3">Número de Teléfono<span class="text-danger"> *</span></label>
+                            <InputText id="telefono" class="formulario-control" @bind-Value="Cliente.NumTelefono" type="tel"
+                                       placeholder="XXX-XXX-XXXX"/>
+                        </div>
                     </div>
-                </div>
-                
+                    @*Dirección del Cliente*@
+                    <div class="row justify-content-between text-left">
+                        <div class="formulario-grupo col-sm-12 flex-column d-flex">
+                            <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
+                            <InputText id="direccion" class="formulario-control" @bind-Value="Cliente.Direccion"/>
+                        </div>
+                    </div>
                 </div>
                    
                 
-                @*Dirección del Cliente*@
-                <div class="row justify-content-between text-left">
-                    <div class="formulario-grupo col-sm-12 flex-column d-flex">
-                        <label class="form-control-label px-3">Dirección<span class="text-danger"> *</span></label>
-                        <InputText id="direccion" class="formulario-control" @bind-Value="Cliente.Direccion"/>
-                    </div>
-                </div>
-
+                
                 @*Botón Guardar*@
-                <div class="row justify-content-end">
+                <div class="form-footer text-center mt-2">
                     <div class="d-flex justify-content-center">
                         <a href="/" class="btn btn-secondary">Volver</a>
                         <button type="submit" class="btn-enviar btn-block">Guardar</button>
@@ -90,6 +96,7 @@
 {
     private Clientes Cliente { get; set; } = new Clientes();
     public string? userId;
+    public string MensajeExito { get; set; } = String.Empty;
     
     protected override async Task OnInitializedAsync()
     { 
@@ -114,7 +121,7 @@
             Cliente.FechaIngreso = DateTime.Now;
         }
         await clienteServices.Guardar(Cliente);
-        nav.NavigateTo("/");
+        MensajeExito = "Tu información fue guardada correctamente";
     }
     
 }
