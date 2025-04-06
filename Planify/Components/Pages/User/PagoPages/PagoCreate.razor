@@ -66,7 +66,7 @@
                       <div class="d-flex flex-row pb-3">
                         <h4>Selecciona tu Tarjeta</h4>
                       </div>
-                      <InputRadioGroup @bind-Value="pago.TarjetaId">
+                      <InputRadioGroup @bind-Value="TarjetaSeleccionadaId">
                         @foreach (var tarjeta in ListaTarjetas)
                         {
                           <div class="tarjeta-container">
@@ -146,6 +146,8 @@
   private double Itbis;
   private double Total;
   
+  public int TarjetaSeleccionadaId { get; set; }
+  
   protected override async Task OnInitializedAsync()
   {
     presupuesto = await presupuestoService.Buscar(presupuestoId);
@@ -163,6 +165,14 @@
     pago.userId = userId;
     pago.FechaCobro = DateTime.Now;
     
+    var tarjetaSeleccionada = ListaTarjetas.FirstOrDefault(t => t.TarjetaId == TarjetaSeleccionadaId);
+    if (tarjetaSeleccionada != null)
+    {
+      pago.Ultimos4Digitos = tarjetaSeleccionada.NumTarjetaCredito.Substring(tarjetaSeleccionada.NumTarjetaCredito.Length - 4);
+      pago.Banco = tarjetaSeleccionada.Banco;
+      pago.ApodoTarjeta = tarjetaSeleccionada.ApodoTarjetaCredito;
+      pago.TitularTarjeta = tarjetaSeleccionada.TitularTarjeta;
+    }
     
     foreach (var articulo in detalle)
     {
