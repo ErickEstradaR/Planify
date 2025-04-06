@@ -80,6 +80,7 @@
                                 @*Detalles *@
                                 @foreach (var detalle in Presupuesto.PresupuestosDetalles)
                                 {
+                                    if (detalle.Articulo != null)
                                     {
                                         <tr class="text-center">
                                             <td class="text-lg-start">@detalle.Articulo.Nombre</td>
