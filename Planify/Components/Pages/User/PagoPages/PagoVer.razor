@@ -55,11 +55,11 @@
                 </div>
                 <div class="tarjeta-container">
                   <div class="tarjeta-info">
-                    @if (tarjeta.Banco == "Mastercard")
+                    @if (pago.Banco == "Mastercard")
                     {
                       <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743556867/Mastercard-Logo-PNG-HD-1_asmjkb.webp" alt="Logo Mastercard" class="tarjeta-logo">
                     }
-                    else if (tarjeta.Banco == "Visa")
+                    else if (pago.Banco == "Visa")
                     {
                       <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743557099/download-visa-card-logo-icon-png-735811696866915avdywnhoab_o46s2o.png" alt="Logo Visa" class="tarjeta-logo">
                     }
@@ -67,7 +67,7 @@
                     {
                       <img src="https://res.cloudinary.com/drjm09rqf/image/upload/v1743557212/524369-200_uvpsk6.png" alt="Logo Desconocido" class="tarjeta-logo">
                     }
-                    <span class="tarjeta-numero">@tarjeta.ApodoTarjetaCredito</span>
+                    <span class="tarjeta-numero">@pago.ApodoTarjeta ---@pago.Ultimos4Digitos</span>
                   </div>
                 </div>
               </div>
@@ -142,8 +142,7 @@
       nav.NavigateTo("/pagos");
       return;
     }
-
-    tarjeta = await tarjetas.Buscar(pago.TarjetaId);
+    
 
     Itbis = pago.Monto * 0.18;
     Total = pago.Monto + Itbis + 250;
