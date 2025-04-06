@@ -19,6 +19,13 @@
                 </div>
             </div>
 
+            <div>
+                @if (!string.IsNullOrEmpty(MensajeExito))
+                {
+                <div class="alert alert-success">@MensajeExito</div>
+                }
+            </div>
+
             <hr/>
             <h2 class="text-lg-start texto-azul">Mis tarjetas</h2>
             <TarjetasAccordion ListaTarjetas="ListaTarjetas"
@@ -79,6 +86,7 @@
     public List<TarjetasCredito> ListaTarjetas { get; set; } = new List<TarjetasCredito>();
     public string userId { get; set; }
     public Clientes Cliente { get; set; } = new Clientes();
+    public string MensajeExito { get; set; } = String.Empty;
     private async Task Guardar()
     {
         await ObtenerCliente();
@@ -87,6 +95,7 @@
         await TarjetaService.Guardar(Tarjeta);
         ListaTarjetas = await TarjetaService.Listar(t => t.TarjetaId > 0);
         Tarjeta = new TarjetasCredito();
+        MensajeExito = "Tu tarjeta fue guardada correctamente!";
     }
 
     protected override async Task OnInitializedAsync()
@@ -100,6 +109,7 @@
         await TarjetaService.Eliminar(id);
         await ObtenerCliente();
         ListaTarjetas = await TarjetaService.Listar(t => t.ClienteId == Cliente.ClienteId);
+        MensajeExito = "Tu tarjeta fue eliminada!";
     }
 
     private async Task ObtenerCliente()
@@ -115,5 +125,6 @@
         tarjeta.Banco = await TarjetaService.ObtenerTipoTarjeta(tarjeta.NumTarjetaCredito);
         await TarjetaService.Guardar(tarjeta); 
         ListaTarjetas = await TarjetaService.Listar(t => t.ClienteId == Cliente.ClienteId);
+        MensajeExito = "Tu tarjeta fue editada correctamente!";
         }
 }
