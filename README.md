@@ -48,3 +48,13 @@ Los Pull Request son bienvenidos, para cambios mayores, por favor abre un Issue 
 ## Licencia
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+##Usuarios
+
+user:
+enelalmonte@gmail.com
+ProgramacionAplicada1@
+
+admin:
+erickestradarosario@gmail.com
+ProgramacionAplicada1@
