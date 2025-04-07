@@ -57,7 +57,7 @@
                     <thead class="table table-striped text-black">
                     <tr>
                         <th>EventoId</th>
-                        <th>Nombre</th>
+                      <th>Nombre del Cliente</th>
                         <th>Direcci&oacute;n</th>
                         <th>Categor&iacute;a</th>
                         <th>Fecha del Evento</th>
@@ -70,12 +70,12 @@
                     {
                         <tr>
                             <td>@evento.EventoId</td>
-                            <td>@evento.NombreEvento</td>
+                            <td>@evento.Cliente.Nombre</td>
                             <td>@evento.Direccion</td>
                             <td>@evento.Categoria</td>
                             <td>@evento.FechaEvento.ToShortDateString()</td>
                             <td class="text-start">
-                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Evento/Edit/@evento.EventoId"></a>
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Admin/Evento/Edit/@evento.EventoId"></a>
                                 <button class="btn btn-outline-danger bi bi-trash" @onclick="() => MostrarModal(evento.EventoId, evento.NombreEvento)"></button>
                             </td>
                         </tr>
