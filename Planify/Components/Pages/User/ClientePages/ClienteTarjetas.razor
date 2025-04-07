@@ -93,7 +93,7 @@
         Tarjeta.TarjetaId = 0;
         Tarjeta.Banco = await TarjetaService.ObtenerTipoTarjeta(Tarjeta.NumTarjetaCredito);
         await TarjetaService.Guardar(Tarjeta);
-        ListaTarjetas = await TarjetaService.Listar(t => t.TarjetaId > 0);
+        ListaTarjetas = await TarjetaService.Listar(t => t.ClienteId == Cliente.ClienteId);
         Tarjeta = new TarjetasCredito();
         MensajeExito = "Tu tarjeta fue guardada correctamente!";
     }
