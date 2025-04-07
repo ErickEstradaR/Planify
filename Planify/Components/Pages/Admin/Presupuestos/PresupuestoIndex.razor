@@ -48,6 +48,7 @@
                         <thead class="table table-striped text-black">
                         <tr>
                             <th>PresupuestoId</th>
+                            <th>Cliente</th>
                             <th>Evento</th>
                             <th>Fecha</th>
                             <th>Monto Total</th>
@@ -59,11 +60,12 @@
                         {
                             <tr>
                                 <td>@presupuesto.PresupuestoId</td>
+                                <td>@presupuesto.Evento.Cliente?.Nombre</td>
                                 <td>@presupuesto.Evento?.NombreEvento</td>
                                 <td>@presupuesto.Fecha.ToShortDateString()</td>
                                 <td>@presupuesto.MontoTotal.ToString("N2")</td>
                                 <td class="text-lg-start">
-                                    <button class="btn btn-outline-danger bi bi-trash" @onclick="() => MostrarModal(presupuesto.PresupuestoId,presupuesto.Evento?.NombreEvento)"></button>
+                                    <button class="btn btn-outline-danger bi bi-trash" @onclick="() => MostrarModal(presupuesto.PresupuestoId, presupuesto.Evento?.NombreEvento)"></button>
                                 </td>
                             </tr>
                         }
@@ -135,7 +137,7 @@
     @*Metodo Restablecer para restablecer filtros*@
     private async Task Restablecer()
     {
-        
+        ListaPresupuestos = await presupuestoService.Listar(p => p.PresupuestoId > 0);
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
     }
