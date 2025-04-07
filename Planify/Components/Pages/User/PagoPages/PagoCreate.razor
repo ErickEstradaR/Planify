@@ -1,6 +1,7 @@
 @page "/Pago/{userId}/{presupuestoId:int}"
 @inject TarjetasService tarjetas
 @inject PresupuestosService presupuestoService
+@inject ClientesService clienteS
 @inject PagosService pagoServices
 @inject NavigationManager nav
 @rendermode InteractiveServer
@@ -149,6 +150,7 @@
   [Parameter] public int presupuestoId { get; set; }
   
   public Pagos pago { get; set; } = new Pagos();
+  public Clientes cliente { get; set; } = new Clientes();
   public List<TarjetasCredito> ListaTarjetas { get; set; } = new List<TarjetasCredito>();
   public List<PresupuestosDetalle> detalle { get; set; } = new List<PresupuestosDetalle>();
   public Presupuestos presupuesto { get; set; } = new Presupuestos();
@@ -160,10 +162,11 @@
   
   protected override async Task OnInitializedAsync()
   {
+    cliente = await clienteS.BuscarPorUserId(userId);
     presupuesto = await presupuestoService.Buscar(presupuestoId);
     pago.DireccionEnvio = presupuesto.Evento.Direccion;
     detalle = await presupuestoService.ListarDetalle(p => p.PresupuestoId == presupuestoId);
-    ListaTarjetas = await tarjetas.Listar(t => t.TarjetaId > 0);
+    ListaTarjetas = await tarjetas.Listar(t => t.ClienteId == cliente.ClienteId );
     
     pago.Monto = detalle.Sum(articulo => articulo.Articulo.Precio * articulo.Cantidad);
     pago.agregadoItbis = pago.Monto * 0.18;
