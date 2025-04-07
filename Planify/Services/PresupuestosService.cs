@@ -117,7 +117,7 @@ public class PresupuestosService (IDbContextFactory<ApplicationDbContext> dbfact
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
         return await contexto.Presupuestos
-            .AsNoTracking().Include(p=>p.Evento)
+            .AsNoTracking().Include(p=>p.Evento).ThenInclude(pe=>pe.Cliente)
             .Where(criterio)
             .ToListAsync();
     }
