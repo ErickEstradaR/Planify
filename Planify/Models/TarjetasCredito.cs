@@ -10,6 +10,7 @@ public class TarjetasCredito
     
     [Required(ErrorMessage = "El número de tarjeta es obligatorio.")]
     [StringLength(19, MinimumLength = 13, ErrorMessage = "El número de tarjeta debe tener entre 13 y 19 dígitos.")]
+    [RegularExpression("^[0-9]+$", ErrorMessage = "El número de tarjeta solo puede contener dígitos.")]
     public string NumTarjetaCredito { get; set; }
     
     [Required(ErrorMessage = "El código CCV es obligatorio.")]
