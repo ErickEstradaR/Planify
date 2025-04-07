@@ -79,7 +79,7 @@ public class EventosService (IDbContextFactory<ApplicationDbContext> dbfactory)
     public async Task<List<Eventos>> Listar(Expression<Func<Eventos, bool>> Criterio)
     {
         await using var contexto = await dbfactory.CreateDbContextAsync();
-        return await contexto.Eventos.
+        return await contexto.Eventos.Include(e=>e.Cliente).
             AsNoTracking().Where(Criterio)
             .ToListAsync();
     }

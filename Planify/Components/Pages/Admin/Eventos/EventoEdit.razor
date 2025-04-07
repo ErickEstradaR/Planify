@@ -13,7 +13,8 @@
     <Authorized>
     <EditForm Model="Evento" OnValidSubmit="Guardar" FormName="Evento">
         <ChildContent Context="eventoContext">
-        <DataAnnotationsValidator/>
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
 
             <PageTitle>Editar Evento</PageTitle>
             <div class="container-formulario px-1 py-5 mx-auto">
@@ -45,7 +46,10 @@
                                 </div>
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Fecha<span class="text-danger"> *</span></label>
-                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
+                                    <InputDate id="fecha"
+                                               class="formulario-control"
+                                               @bind-Value="Evento.FechaEvento"
+                                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                                 </div>
                             </div>
                             <div class="formulario-grupo col-sm-6 flex-column d-flex">
@@ -97,6 +101,7 @@
     private async Task Guardar()
     {
         await eventosServices.Guardar(Evento);
+        nav.NavigateTo("/Admin/Eventos");
     }
     
     protected override async Task OnInitializedAsync()

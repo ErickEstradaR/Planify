@@ -13,7 +13,13 @@
     <Authorized>
     <EditForm Model="Evento" OnValidSubmit="Guardar" FormName="Evento">
         <ChildContent Context="eventoContext">
-        <DataAnnotationsValidator/>
+            <DataAnnotationsValidator/>
+            <div>
+                @if (!string.IsNullOrEmpty(MensajeError))
+                {
+                <div class="alert alert-danger">@MensajeError</div>
+                }
+            </div>
 
             <PageTitle>Crea tu evento!</PageTitle>
             <div class="container-formulario px-1 py-5 mx-auto">
@@ -30,7 +36,11 @@
                                 </div>
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
-                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
+                                    <InputDate id="fecha"
+                                               class="formulario-control"
+                                               @bind-Value="Evento.FechaEvento"
+                                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+
                                 </div>
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Descripción<span class="text-danger"> *</span></label>
@@ -97,11 +107,18 @@
     public Eventos Evento { get; set; } = new Eventos();
     public Clientes Cliente = new Clientes();
     public string? userId;
+    public string MensajeError { get; set; } = String.Empty;
 
     private async Task Guardar()
     {
-        
-        if (!string.IsNullOrEmpty(userId))
+        if (Evento.FechaEvento < DateTime.Today)
+        {
+        MensajeError = "La fecha es menor a la actual";
+        return;
+        }
+
+
+    if (!string.IsNullOrEmpty(userId))
         { 
             Cliente = await clienteServices.BuscarPorUserId(userId);
         }

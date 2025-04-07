@@ -30,9 +30,10 @@
                                 </div>
                                 <div class="formulario-grupo col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Cuando será?<span class="text-danger"> *</span></label>
-                                    <InputDate id="telefono" class="formulario-control" @bind-Value="Evento.FechaEvento" />
-                                </div>
-                                
+                                    <InputDate id="fecha"
+                                               class="formulario-control"
+                                               @bind-Value="Evento.FechaEvento"
+                                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />                                </div>
                             </div>
 
                             <div class="row justify-content-between text-left">
